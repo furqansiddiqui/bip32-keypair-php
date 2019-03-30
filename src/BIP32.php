@@ -40,4 +40,16 @@ class BIP32
     {
         return self::PrivateKey(new Base16($hexits));
     }
+
+    /**
+     * @param string $seed
+     * @param string $hmacKey
+     * @return MasterKey
+     * @throws Exception\ExtendedKeyException
+     * @throws Exception\InvalidMasterKeySeedException
+     */
+    public static function MasterKey(string $seed, string $hmacKey): MasterKey
+    {
+        return new MasterKey($seed, $hmacKey);
+    }
 }
