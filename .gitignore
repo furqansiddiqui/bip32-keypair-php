@@ -1,0 +1,5 @@
+.idea/
+workspace/
+vendor/
+composer.phar
+composer.lock
