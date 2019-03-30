@@ -16,6 +16,7 @@ namespace FurqanSiddiqui\BIP32\KeyPair;
 
 use FurqanSiddiqui\BcMath\BcBaseConvert;
 use FurqanSiddiqui\BIP32\ECDSA\Curves;
+use FurqanSiddiqui\BIP32\ECDSA\FailSafeCurveValidate;
 use FurqanSiddiqui\BIP32\ECDSA\Vectors;
 use FurqanSiddiqui\BIP32\Exception\PublicKeyException;
 use FurqanSiddiqui\DataTypes\Base16;
@@ -104,33 +105,12 @@ class PublicKey
     }
 
     /**
-     * @param int $prefix
-     * @return P2PKH_Address
-     * @throws AddressGenerateException
-
-    public function p2pkh(int $prefix): P2PKH_Address
-    {
-        return new P2PKH_Address($this, $prefix);
-    }*/
-
-    /**
-     * @param int $p2pkhPrefix
-     * @param int $p2shPrefix
-     * @return P2SH_Address
-     * @throws AddressGenerateException
-
-    public function p2sh(int $p2pkhPrefix, int $p2shPrefix): P2SH_Address
-    {
-        return new P2SH_Address($this->p2pkh($p2pkhPrefix), $p2shPrefix);
-    }*/
-
-    /**
      * @return FailSafeCurveValidate
-
+     */
     public function failSafeCurveValidate(): FailSafeCurveValidate
     {
         return new FailSafeCurveValidate($this);
-    }*/
+    }
 
     /**
      * @return int
