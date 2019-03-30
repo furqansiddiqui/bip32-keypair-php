@@ -14,10 +14,30 @@ declare(strict_types=1);
 
 namespace FurqanSiddiqui\BIP32;
 
+use FurqanSiddiqui\BIP32\KeyPair\PrivateKey;
+use FurqanSiddiqui\DataTypes\Base16;
+
 /**
  * Class BIP32
  * @package FurqanSiddiqui\BIP32
  */
 class BIP32
 {
+    /**
+     * @param Base16 $entropy
+     * @return PrivateKey
+     */
+    public static function PrivateKey(Base16 $entropy): PrivateKey
+    {
+        return new PrivateKey($entropy);
+    }
+
+    /**
+     * @param string $hexits
+     * @return PrivateKey
+     */
+    public static function PrivateKeyFromHexits(string $hexits): PrivateKey
+    {
+        return self::PrivateKey(new Base16($hexits));
+    }
 }
