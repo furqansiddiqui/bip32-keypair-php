@@ -18,7 +18,6 @@ use FurqanSiddiqui\BIP32\ECDSA\Curves;
 use FurqanSiddiqui\BIP32\Extend\ExtendedKeyInterface;
 use FurqanSiddiqui\BIP32\Extend\PrivateKeyInterface;
 use FurqanSiddiqui\BIP32\Extend\PublicKeyInterface;
-use FurqanSiddiqui\BIP32\ExtendedKey;
 use FurqanSiddiqui\DataTypes\Binary;
 
 /**
@@ -27,13 +26,13 @@ use FurqanSiddiqui\DataTypes\Binary;
  */
 class PrivateKey implements PrivateKeyInterface
 {
-    /** @var null|ExtendedKey */
+    /** @var null|ExtendedKeyInterface */
     protected $extendedKey;
     /** @var Binary */
     protected $privateKey;
     /** @var null|int */
     protected $curve;
-    /** @var null|PublicKey */
+    /** @var null|PublicKeyInterface */
     protected $publicKey;
 
     /**

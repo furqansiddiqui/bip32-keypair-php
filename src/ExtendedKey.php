@@ -34,7 +34,7 @@ class ExtendedKey implements ExtendedKeyInterface
     public const HARDENED_INDEX_BEGIN = 0x80000000;
     public const BITWISE_SEED_LENGTH = 512;
 
-    /** @var null|ExtendedKey */
+    /** @var null|ExtendedKeyInterface */
     protected $parent;
     /** @var int */
     protected $depth;
