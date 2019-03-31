@@ -24,17 +24,39 @@ use FurqanSiddiqui\ECDSA\Vector;
  */
 interface PublicKeyInterface
 {
+    /**
+     * PublicKeyInterface constructor.
+     * @param PrivateKeyInterface $keyPair
+     */
     public function __construct(PrivateKeyInterface $keyPair);
 
+    /**
+     * @return Binary
+     */
     public function raw(): Binary;
 
+    /**
+     * @return Binary
+     */
     public function compressed(): Binary;
 
+    /**
+     * @return FailSafeCurveValidate
+     */
     public function failSafeCurveValidate(): FailSafeCurveValidate;
 
+    /**
+     * @return int
+     */
     public function curve(): int;
 
+    /**
+     * @return Vector
+     */
     public function vector(): Vector;
 
+    /**
+     * @return PrivateKeyInterface
+     */
     public function privateKey(): PrivateKeyInterface;
 }
