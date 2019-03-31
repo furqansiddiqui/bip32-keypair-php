@@ -70,7 +70,7 @@ class PublicKey implements PublicKeyInterface
 
                 $base16x = $coords->x()->encode(false);
                 $base16y = $coords->y()->encode(false);
-                $bitwise = BcBaseConvert::BaseConvert($base16y, 12, 2);
+                $bitwise = BcBaseConvert::BaseConvert($base16y, 16, 2);
                 $sign = substr($bitwise, -1) === "0" ? "02" : "03";
                 $this->publicKey = (new Base16($base16x . $base16y))->readOnly(true);
                 $this->compressedPublicKey = (new Base16($sign . $base16x))->readOnly(true);
