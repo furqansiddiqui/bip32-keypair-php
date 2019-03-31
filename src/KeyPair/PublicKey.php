@@ -19,6 +19,8 @@ use FurqanSiddiqui\BIP32\ECDSA\Curves;
 use FurqanSiddiqui\BIP32\ECDSA\FailSafeCurveValidate;
 use FurqanSiddiqui\BIP32\ECDSA\Vectors;
 use FurqanSiddiqui\BIP32\Exception\PublicKeyException;
+use FurqanSiddiqui\BIP32\Extend\PrivateKeyInterface;
+use FurqanSiddiqui\BIP32\Extend\PublicKeyInterface;
 use FurqanSiddiqui\DataTypes\Base16;
 use FurqanSiddiqui\DataTypes\Binary;
 use FurqanSiddiqui\ECDSA\Vector;
@@ -27,7 +29,7 @@ use FurqanSiddiqui\ECDSA\Vector;
  * Class PublicKey
  * @package FurqanSiddiqui\BIP32\KeyPair
  */
-class PublicKey
+class PublicKey implements PublicKeyInterface
 {
     /** @var PrivateKey */
     private $privateKey;
@@ -42,12 +44,12 @@ class PublicKey
 
     /**
      * PublicKey constructor.
-     * @param PrivateKey $keyPair
+     * @param PrivateKeyInterface $keyPair
      * @throws PublicKeyException
      * @throws \FurqanSiddiqui\ECDSA\Exception\GenerateVectorException
      * @throws \FurqanSiddiqui\ECDSA\Exception\MathException
      */
-    public function __construct(PrivateKey $keyPair)
+    public function __construct(PrivateKeyInterface $keyPair)
     {
         $this->privateKey = $keyPair;
         $this->curve = $this->privateKey->getEllipticCurve();
@@ -129,9 +131,9 @@ class PublicKey
     }
 
     /**
-     * @return PrivateKey
+     * @return PrivateKeyInterface
      */
-    public function privateKey(): PrivateKey
+    public function privateKey(): PrivateKeyInterface
     {
         return $this->privateKey;
     }
