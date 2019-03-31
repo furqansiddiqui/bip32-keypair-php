@@ -15,6 +15,9 @@ declare(strict_types=1);
 namespace FurqanSiddiqui\BIP32\KeyPair;
 
 use FurqanSiddiqui\BIP32\ECDSA\Curves;
+use FurqanSiddiqui\BIP32\Extend\ExtendedKeyInterface;
+use FurqanSiddiqui\BIP32\Extend\PrivateKeyInterface;
+use FurqanSiddiqui\BIP32\Extend\PublicKeyInterface;
 use FurqanSiddiqui\BIP32\ExtendedKey;
 use FurqanSiddiqui\DataTypes\Binary;
 
@@ -22,7 +25,7 @@ use FurqanSiddiqui\DataTypes\Binary;
  * Class PrivateKey
  * @package FurqanSiddiqui\BIP32\KeyPair
  */
-class PrivateKey
+class PrivateKey implements PrivateKeyInterface
 {
     /** @var null|ExtendedKey */
     private $extendedKey;
@@ -36,9 +39,9 @@ class PrivateKey
     /**
      * PrivateKey constructor.
      * @param Binary $entropy
-     * @param ExtendedKey|null $extendedKey
+     * @param ExtendedKeyInterface|null $extendedKey
      */
-    public function __construct(Binary $entropy, ?ExtendedKey $extendedKey = null)
+    public function __construct(Binary $entropy, ?ExtendedKeyInterface $extendedKey = null)
     {
         $this->extendedKey = $extendedKey;
         $this->privateKey = $entropy;
@@ -58,7 +61,7 @@ class PrivateKey
      * @param $value
      * @return PrivateKey
      */
-    public function set(string $prop, $value): self
+    public function set(string $prop, $value): PrivateKeyInterface
     {
         if ($prop === "curve") {
             if ($this->extendedKey) {
@@ -111,12 +114,12 @@ class PrivateKey
     }
 
     /**
-     * @return PublicKey
+     * @return PublicKeyInterface
      * @throws \FurqanSiddiqui\BIP32\Exception\PublicKeyException
      * @throws \FurqanSiddiqui\ECDSA\Exception\GenerateVectorException
      * @throws \FurqanSiddiqui\ECDSA\Exception\MathException
      */
-    public function publicKey(): PublicKey
+    public function publicKey(): PublicKeyInterface
     {
         if (!$this->publicKey) {
             $this->publicKey = new PublicKey($this);
