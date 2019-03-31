@@ -28,13 +28,13 @@ use FurqanSiddiqui\DataTypes\Binary;
 class PrivateKey implements PrivateKeyInterface
 {
     /** @var null|ExtendedKey */
-    private $extendedKey;
+    protected $extendedKey;
     /** @var Binary */
-    private $privateKey;
+    protected $privateKey;
     /** @var null|int */
-    private $curve;
+    protected $curve;
     /** @var null|PublicKey */
-    private $publicKey;
+    protected $publicKey;
 
     /**
      * PrivateKey constructor.

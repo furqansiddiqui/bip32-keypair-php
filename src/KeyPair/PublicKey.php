@@ -32,15 +32,15 @@ use FurqanSiddiqui\ECDSA\Vector;
 class PublicKey implements PublicKeyInterface
 {
     /** @var PrivateKey */
-    private $privateKey;
+    protected $privateKey;
     /** @var int */
-    private $curve;
+    protected $curve;
     /** @var \FurqanSiddiqui\ECDSA\Vector */
-    private $vector;
+    protected $vector;
     /** @var Binary */
-    private $publicKey;
+    protected $publicKey;
     /** @var Binary */
-    private $compressedPublicKey;
+    protected $compressedPublicKey;
 
     /**
      * PublicKey constructor.
