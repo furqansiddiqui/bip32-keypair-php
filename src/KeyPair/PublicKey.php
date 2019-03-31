@@ -35,7 +35,7 @@ class PublicKey implements PublicKeyInterface
     protected $privateKey;
     /** @var int */
     protected $curve;
-    /** @var \FurqanSiddiqui\ECDSA\Vector */
+    /** @var Vector */
     protected $vector;
     /** @var Binary */
     protected $publicKey;
