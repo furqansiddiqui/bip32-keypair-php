@@ -35,17 +35,20 @@ class ExtendedKey implements ExtendedKeyInterface
     public const BITWISE_SEED_LENGTH = 512;
 
     /** @var null|ExtendedKey */
-    private $parent;
+    protected $parent;
     /** @var int */
-    private $depth;
-    /** @var PrivateKeyInterface */
-    private $privateKey;
+    protected $depth;
     /** @var Binary */
-    private $chainCode;
+    protected $privateKey;
+    /** @var Binary */
+    protected $chainCode;
     /** @var int */
-    private $curve;
+    protected $curve;
     /** @var bool */
-    private $validateChildKeyCurveN;
+    protected $validateChildKeyCurveN;
+
+    /** @var null|PrivateKeyInterface */
+    private $privateKeyInstance;
 
     /**
      * ExtendedKey constructor.
@@ -67,7 +70,7 @@ class ExtendedKey implements ExtendedKeyInterface
             throw new ExtendedKeyException('Cannot extend key to more than 9 depth');
         }
 
-        $this->privateKey = new PrivateKey($seed->copy(0, 32), $this);
+        $this->privateKey = $seed->copy(0, 32)->readOnly(true);
         $this->chainCode = $seed->copy(32)->readOnly(true);
         $this->validateChildKeyCurveN = true;
     }
@@ -116,22 +119,23 @@ class ExtendedKey implements ExtendedKeyInterface
     }
 
     /**
-     * @return PrivateKey
+     * @return PrivateKeyInterface
      */
     public function privateKey(): PrivateKeyInterface
     {
-        return $this->privateKey;
+        if (!$this->privateKeyInstance) {
+            $this->privateKeyInstance = new PrivateKey($this->privateKey, $this);
+        }
+
+        return $this->privateKeyInstance;
     }
 
     /**
      * @return PublicKeyInterface
-     * @throws Exception\PublicKeyException
-     * @throws \FurqanSiddiqui\ECDSA\Exception\GenerateVectorException
-     * @throws \FurqanSiddiqui\ECDSA\Exception\MathException
      */
     public function publicKey(): PublicKeyInterface
     {
-        return $this->privateKey->publicKey();
+        return $this->privateKey()->publicKey();
     }
 
     /**
@@ -164,10 +168,7 @@ class ExtendedKey implements ExtendedKeyInterface
      * @param $path
      * @return ExtendedKeyInterface
      * @throws ChildKeyDeriveException
-     * @throws Exception\PublicKeyException
      * @throws ExtendedKeyException
-     * @throws \FurqanSiddiqui\ECDSA\Exception\GenerateVectorException
-     * @throws \FurqanSiddiqui\ECDSA\Exception\MathException
      */
     public function derivePath($path): ExtendedKeyInterface
     {
@@ -196,17 +197,14 @@ class ExtendedKey implements ExtendedKeyInterface
      * @param bool $isHardened
      * @return ExtendedKeyInterface
      * @throws ChildKeyDeriveException
-     * @throws Exception\PublicKeyException
      * @throws ExtendedKeyException
-     * @throws \FurqanSiddiqui\ECDSA\Exception\GenerateVectorException
-     * @throws \FurqanSiddiqui\ECDSA\Exception\MathException
      */
     public function derive(int $index, bool $isHardened = false): ExtendedKeyInterface
     {
         $index = $isHardened ? $index + self::HARDENED_INDEX_BEGIN : $index;
         $indexHex = str_pad(dechex($index), 8, "0", STR_PAD_LEFT);
         $hmacRawData = $isHardened ?
-            "00" . $this->privateKey->raw()->get()->base16() . $indexHex :
+            "00" . $this->privateKey()->raw()->get()->base16() . $indexHex :
             $this->publicKey()->compressed()->get()->base16() . $indexHex;
 
         $hmac = new Binary(hash_hmac("sha512", hex2bin($hmacRawData), $this->chainCode->raw(), true));
@@ -214,7 +212,7 @@ class ExtendedKey implements ExtendedKeyInterface
         $childChainCode = $hmac->copy(-32); // Get last 32 bytes as Chain code
 
 
-        $childExtendedKey = $this->collateChildParentKeys($childPrivateKey, $this->privateKey->raw());
+        $childExtendedKey = $this->collateChildParentKeys($childPrivateKey, $this->privateKey()->raw());
         $childExtendedKey->append($childChainCode->raw());
         return new self($childExtendedKey, $this);
     }
@@ -224,9 +222,6 @@ class ExtendedKey implements ExtendedKeyInterface
      * @param Binary $parent
      * @return Binary
      * @throws ChildKeyDeriveException
-     * @throws Exception\PublicKeyException
-     * @throws \FurqanSiddiqui\ECDSA\Exception\GenerateVectorException
-     * @throws \FurqanSiddiqui\ECDSA\Exception\MathException
      */
     private function collateChildParentKeys(Binary $child, Binary $parent): Binary
     {
