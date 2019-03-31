@@ -48,7 +48,7 @@ class ExtendedKey implements ExtendedKeyInterface
     protected $validateChildKeyCurveN;
 
     /** @var null|PrivateKeyInterface */
-    private $privateKeyInstance;
+    protected $privateKeyInstance;
 
     /**
      * ExtendedKey constructor.
