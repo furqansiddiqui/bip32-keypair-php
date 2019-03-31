@@ -18,8 +18,10 @@ use FurqanSiddiqui\BcMath\BcNumber;
 use FurqanSiddiqui\BIP32\ECDSA\Curves;
 use FurqanSiddiqui\BIP32\Exception\ChildKeyDeriveException;
 use FurqanSiddiqui\BIP32\Exception\ExtendedKeyException;
+use FurqanSiddiqui\BIP32\Extend\ExtendedKeyInterface;
+use FurqanSiddiqui\BIP32\Extend\PrivateKeyInterface;
+use FurqanSiddiqui\BIP32\Extend\PublicKeyInterface;
 use FurqanSiddiqui\BIP32\KeyPair\PrivateKey;
-use FurqanSiddiqui\BIP32\KeyPair\PublicKey;
 use FurqanSiddiqui\DataTypes\Base16;
 use FurqanSiddiqui\DataTypes\Binary;
 
@@ -27,7 +29,7 @@ use FurqanSiddiqui\DataTypes\Binary;
  * Class ExtendedKey
  * @package FurqanSiddiqui\BIP32
  */
-class ExtendedKey
+class ExtendedKey implements ExtendedKeyInterface
 {
     public const HARDENED_INDEX_BEGIN = 0x80000000;
     public const BITWISE_SEED_LENGTH = 512;
@@ -36,7 +38,7 @@ class ExtendedKey
     private $parent;
     /** @var int */
     private $depth;
-    /** @var PrivateKey */
+    /** @var PrivateKeyInterface */
     private $privateKey;
     /** @var Binary */
     private $chainCode;
@@ -48,10 +50,10 @@ class ExtendedKey
     /**
      * ExtendedKey constructor.
      * @param Binary $seed
-     * @param ExtendedKey|null $parent
+     * @param ExtendedKeyInterface|null $parent
      * @throws ExtendedKeyException
      */
-    public function __construct(Binary $seed, ?ExtendedKey $parent = null)
+    public function __construct(Binary $seed, ?ExtendedKeyInterface $parent = null)
     {
         if ($seed->length()->bits() !== static::BITWISE_SEED_LENGTH) {
             throw new ExtendedKeyException(
@@ -89,9 +91,9 @@ class ExtendedKey
     /**
      * @param string $prop
      * @param $value
-     * @return ExtendedKey
+     * @return ExtendedKeyInterface
      */
-    public function set(string $prop, $value): self
+    public function set(string $prop, $value): ExtendedKeyInterface
     {
         if ($prop === "curve") {
             if (!is_int($value) || !in_array($value, array_keys(Curves::INDEX))) {
@@ -116,18 +118,18 @@ class ExtendedKey
     /**
      * @return PrivateKey
      */
-    public function privateKey(): PrivateKey
+    public function privateKey(): PrivateKeyInterface
     {
         return $this->privateKey;
     }
 
     /**
-     * @return PublicKey
+     * @return PublicKeyInterface
      * @throws Exception\PublicKeyException
      * @throws \FurqanSiddiqui\ECDSA\Exception\GenerateVectorException
      * @throws \FurqanSiddiqui\ECDSA\Exception\MathException
      */
-    public function publicKey(): PublicKey
+    public function publicKey(): PublicKeyInterface
     {
         return $this->privateKey->publicKey();
     }
@@ -160,14 +162,14 @@ class ExtendedKey
 
     /**
      * @param $path
-     * @return ExtendedKey
+     * @return ExtendedKeyInterface
      * @throws ChildKeyDeriveException
      * @throws Exception\PublicKeyException
      * @throws ExtendedKeyException
      * @throws \FurqanSiddiqui\ECDSA\Exception\GenerateVectorException
      * @throws \FurqanSiddiqui\ECDSA\Exception\MathException
      */
-    public function derivePath($path): self
+    public function derivePath($path): ExtendedKeyInterface
     {
         $parts = explode("/", trim(strtolower($path), "/"));
         if ($parts[0] !== "m") {
@@ -192,14 +194,14 @@ class ExtendedKey
     /**
      * @param int $index
      * @param bool $isHardened
-     * @return ExtendedKey
+     * @return ExtendedKeyInterface
      * @throws ChildKeyDeriveException
      * @throws Exception\PublicKeyException
      * @throws ExtendedKeyException
      * @throws \FurqanSiddiqui\ECDSA\Exception\GenerateVectorException
      * @throws \FurqanSiddiqui\ECDSA\Exception\MathException
      */
-    public function derive(int $index, bool $isHardened = false): self
+    public function derive(int $index, bool $isHardened = false): ExtendedKeyInterface
     {
         $index = $isHardened ? $index + self::HARDENED_INDEX_BEGIN : $index;
         $indexHex = str_pad(dechex($index), 8, "0", STR_PAD_LEFT);
