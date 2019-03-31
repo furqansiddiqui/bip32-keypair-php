@@ -178,7 +178,7 @@ class ExtendedKey implements ExtendedKeyInterface
 
     /**
      * @param $path
-     * @return ExtendedKeyInterface
+     * @return ExtendedKey
      * @throws ExtendedKeyException
      */
     public function derivePath($path): ExtendedKeyInterface
@@ -206,7 +206,7 @@ class ExtendedKey implements ExtendedKeyInterface
     /**
      * @param int $index
      * @param bool $isHardened
-     * @return ExtendedKeyInterface
+     * @return ExtendedKey
      * @throws ChildKeyDeriveException
      * @throws ExtendedKeyException
      */

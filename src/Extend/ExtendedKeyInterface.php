@@ -23,6 +23,10 @@ use FurqanSiddiqui\DataTypes\Binary;
  */
 interface ExtendedKeyInterface
 {
+    /**
+     * @return Binary
+     */
+    public function raw(): Binary;
 
     /**
      * @return int
