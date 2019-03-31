@@ -49,6 +49,8 @@ class ExtendedKey implements ExtendedKeyInterface
 
     /** @var null|PrivateKeyInterface */
     protected $privateKeyInstance;
+    /** @var callable */
+    protected $internalDerivationCallback;
 
     /**
      * ExtendedKey constructor.
@@ -72,6 +74,7 @@ class ExtendedKey implements ExtendedKeyInterface
 
         $this->privateKey = $seed->copy(0, 32)->readOnly(true);
         $this->chainCode = $seed->copy(32)->readOnly(true);
+        $this->internalDerivationCallback = [$this, "derive"];
         $this->validateChildKeyCurveN = true;
     }
 
@@ -108,6 +111,15 @@ class ExtendedKey implements ExtendedKeyInterface
         }
 
         throw new \DomainException('Cannot set value of inaccessible property');
+    }
+
+    /**
+     * @return Binary
+     */
+    public function raw(): Binary
+    {
+        $raw = $this->privateKey->raw() . $this->chainCode->raw();
+        return new Binary($raw);
     }
 
     /**
@@ -167,7 +179,6 @@ class ExtendedKey implements ExtendedKeyInterface
     /**
      * @param $path
      * @return ExtendedKeyInterface
-     * @throws ChildKeyDeriveException
      * @throws ExtendedKeyException
      */
     public function derivePath($path): ExtendedKeyInterface
@@ -186,7 +197,7 @@ class ExtendedKey implements ExtendedKeyInterface
 
             $isHardened = substr($part, -1) === "'" ? true : false;
             $index = $isHardened ? substr($part, 0, -1) : $part;
-            $derivedKey = $derivedKey->derive(intval($index), $isHardened);
+            $derivedKey = call_user_func_array($this->internalDerivationCallback, [intval($index), $isHardened]);
         }
 
         return $derivedKey;
@@ -210,7 +221,6 @@ class ExtendedKey implements ExtendedKeyInterface
         $hmac = new Binary(hash_hmac("sha512", hex2bin($hmacRawData), $this->chainCode->raw(), true));
         $childPrivateKey = $hmac->copy(0, 32); // Get first 32 bytes
         $childChainCode = $hmac->copy(-32); // Get last 32 bytes as Chain code
-
 
         $childExtendedKey = $this->collateChildParentKeys($childPrivateKey, $this->privateKey()->raw());
         $childExtendedKey->append($childChainCode->raw());
