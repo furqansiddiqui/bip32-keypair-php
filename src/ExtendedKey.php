@@ -49,8 +49,6 @@ class ExtendedKey implements ExtendedKeyInterface
 
     /** @var null|PrivateKeyInterface */
     protected $privateKeyInstance;
-    /** @var callable */
-    protected $internalDerivationCallback;
 
     /**
      * ExtendedKey constructor.
@@ -74,7 +72,6 @@ class ExtendedKey implements ExtendedKeyInterface
 
         $this->privateKey = $seed->copy(0, 32)->readOnly(true);
         $this->chainCode = $seed->copy(32)->readOnly(true);
-        $this->internalDerivationCallback = [$this, "derive"];
         $this->validateChildKeyCurveN = true;
     }
 
@@ -197,7 +194,7 @@ class ExtendedKey implements ExtendedKeyInterface
 
             $isHardened = substr($part, -1) === "'" ? true : false;
             $index = $isHardened ? substr($part, 0, -1) : $part;
-            $derivedKey = call_user_func_array($this->internalDerivationCallback, [intval($index), $isHardened]);
+            $derivedKey = $derivedKey->derive(intval($index), $isHardened);
         }
 
         return $derivedKey;
