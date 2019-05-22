@@ -29,7 +29,7 @@ class BIP32
      */
     public static function PrivateKey(Base16 $entropy): PrivateKey
     {
-        return new PrivateKey($entropy);
+        return new PrivateKey($entropy->binary());
     }
 
     /**
@@ -46,10 +46,9 @@ class BIP32
      * @param string $hmacKey
      * @return MasterKey
      * @throws Exception\ExtendedKeyException
-     * @throws Exception\InvalidMasterKeySeedException
      */
     public static function MasterKey(string $seed, string $hmacKey): MasterKey
     {
-        return new MasterKey($seed, $hmacKey);
+        return new MasterKey(new Base16($seed), $hmacKey);
     }
 }

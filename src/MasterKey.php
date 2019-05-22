@@ -14,9 +14,7 @@ declare(strict_typest=1);
 
 namespace FurqanSiddiqui\BIP32;
 
-use FurqanSiddiqui\BIP32\Exception\InvalidMasterKeySeedException;
 use FurqanSiddiqui\DataTypes\Base16;
-use FurqanSiddiqui\DataTypes\DataTypes;
 
 /**
  * Class MasterKey
@@ -26,22 +24,21 @@ class MasterKey extends ExtendedKey
 {
     /**
      * MasterKey constructor.
-     * @param string $seed
+     * @param Base16 $seed
      * @param string|null $hmacKey
      * @throws Exception\ExtendedKeyException
-     * @throws InvalidMasterKeySeedException
      */
-    public function __construct(string $seed, ?string $hmacKey = null)
+    public function __construct(Base16 $seed, ?string $hmacKey = null)
     {
-        if (!DataTypes::isBase16($seed)) {
-            throw new InvalidMasterKeySeedException('Master key seed must be hexadecimal entropy');
+        $binary = $seed->binary();
+        if (!in_array($binary->size()->bits(), [128, 256, 512])) {
+            throw new \LengthException('Base16 seed must be 128, 256 or 512-bit long');
         }
 
-        $seed = new Base16($seed);
         if ($hmacKey) {
-            $seed = $seed->hash()->hmac("sha512", $hmacKey);
+            $binary = $binary->hash()->hmac("sha512", $hmacKey);
         }
 
-        parent::__construct($seed);
+        parent::__construct($binary);
     }
 }

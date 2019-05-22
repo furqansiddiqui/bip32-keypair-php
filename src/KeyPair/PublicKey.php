@@ -21,7 +21,6 @@ use FurqanSiddiqui\BIP32\ECDSA\Vectors;
 use FurqanSiddiqui\BIP32\Exception\PublicKeyException;
 use FurqanSiddiqui\BIP32\Extend\PrivateKeyInterface;
 use FurqanSiddiqui\BIP32\Extend\PublicKeyInterface;
-use FurqanSiddiqui\DataTypes\Base16;
 use FurqanSiddiqui\DataTypes\Binary;
 use FurqanSiddiqui\ECDSA\Vector;
 
@@ -46,13 +45,14 @@ class PublicKey implements PublicKeyInterface
      * PublicKey constructor.
      * @param PrivateKeyInterface $keyPair
      * @throws PublicKeyException
+     * @throws \FurqanSiddiqui\ECDSA\Exception\ECDSA_Exception
      * @throws \FurqanSiddiqui\ECDSA\Exception\GenerateVectorException
      * @throws \FurqanSiddiqui\ECDSA\Exception\MathException
      */
     public function __construct(PrivateKeyInterface $keyPair)
     {
         $this->privateKey = $keyPair;
-        $this->curve = $this->privateKey->getEllipticCurve();
+        $this->curve = $this->privateKey->getEllipticCurveId();
         if (!$this->curve) {
             throw new PublicKeyException('Cannot generate public key; ECDSA curve is not defined');
         }
@@ -68,12 +68,12 @@ class PublicKey implements PublicKeyInterface
                     throw new PublicKeyException('Secp256k1 curve missing "y" point');
                 }
 
-                $base16x = $coords->x()->encode(false);
-                $base16y = $coords->y()->encode(false);
-                $bitwise = BcBaseConvert::BaseConvert($base16y, 16, 2);
+                $base16x = $coords->x()->encode();
+                $base16y = $coords->y()->encode();
+                $bitwise = BcBaseConvert::BaseConvert($base16y->hexits(), 16, 2);
                 $sign = substr($bitwise, -1) === "0" ? "02" : "03";
-                $this->publicKey = (new Base16($base16x . $base16y))->readOnly(true);
-                $this->compressedPublicKey = (new Base16($sign . $base16x))->readOnly(true);
+                $this->publicKey    =   $base16x->clone()->append($base16y)->binary()->readOnly(true);
+                $this->compressedPublicKey  =   $base16x->clone()->prepend($sign)->binary()->readOnly(true);
                 break;
             default:
                 throw new PublicKeyException(

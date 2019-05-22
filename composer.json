@@ -16,9 +16,9 @@
     "php-64bit": "^7.2",
     "ext-openssl": "*",
     "ext-bcmath": "*",
-    "furqansiddiqui/data-types-php": "^0.1.0",
-    "furqansiddiqui/bcmath-php": "^0.1.0",
-    "furqansiddiqui/ecdsa-php": "^0.1.0"
+    "furqansiddiqui/data-types-php": "^0.2.14",
+    "furqansiddiqui/bcmath-php": "^0.2.11",
+    "furqansiddiqui/ecdsa-php": "dev-master"
   },
   "autoload": {
     "psr-4": {

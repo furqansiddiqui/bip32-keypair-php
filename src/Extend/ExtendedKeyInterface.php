@@ -63,7 +63,7 @@ interface ExtendedKeyInterface
     /**
      * @return int|null
      */
-    public function getEllipticCurve(): ?int;
+    public function getEllipticCurveId(): ?int;
 
     /**
      * @param $path

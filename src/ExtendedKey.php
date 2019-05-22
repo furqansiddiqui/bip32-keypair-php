@@ -58,7 +58,7 @@ class ExtendedKey implements ExtendedKeyInterface
      */
     public function __construct(Binary $seed, ?ExtendedKeyInterface $parent = null)
     {
-        if ($seed->length()->bits() !== static::BITWISE_SEED_LENGTH) {
+        if ($seed->size()->bits() !== static::BITWISE_SEED_LENGTH) {
             throw new ExtendedKeyException(
                 sprintf('Extended key constructor must be passed with %d bit seed', static::BITWISE_SEED_LENGTH)
             );
@@ -160,14 +160,14 @@ class ExtendedKey implements ExtendedKeyInterface
     /**
      * @return int|null
      */
-    public function getEllipticCurve(): ?int
+    public function getEllipticCurveId(): ?int
     {
         if ($this->curve) {
             return $this->curve;
         }
 
         if ($this->parent) {
-            return $this->parent->getEllipticCurve();
+            return $this->parent->getEllipticCurveId();
         }
 
         return null;
@@ -212,8 +212,8 @@ class ExtendedKey implements ExtendedKeyInterface
         $index = $isHardened ? $index + self::HARDENED_INDEX_BEGIN : $index;
         $indexHex = str_pad(dechex($index), 8, "0", STR_PAD_LEFT);
         $hmacRawData = $isHardened ?
-            "00" . $this->privateKey()->raw()->get()->base16() . $indexHex :
-            $this->publicKey()->compressed()->get()->base16() . $indexHex;
+            $this->privateKey()->raw()->copy()->encode()->base16()->prepend("00")->append($indexHex) :
+            $this->publicKey()->compressed()->encode()->base16()->append($indexHex);
 
         $hmac = new Binary(hash_hmac("sha512", hex2bin($hmacRawData), $this->chainCode->raw(), true));
         $childPrivateKey = $hmac->copy(0, 32); // Get first 32 bytes
@@ -235,6 +235,9 @@ class ExtendedKey implements ExtendedKeyInterface
         $child = $this->key2BcNumber($child, "Child private key");
         $parent = $this->key2BcNumber($parent, "Parent (this) private key");
 
+        $ellipticCurve = Curves::getInstanceOf($this->getEllipticCurveId());
+        $ellipticCurve->
+
         $n = $this->publicKey()->vector()->n();
         if (!$n->isPositive()) {
             throw new ChildKeyDeriveException('Curve order (n) is not positive');
@@ -247,10 +250,10 @@ class ExtendedKey implements ExtendedKeyInterface
             );
         }
 
-        $collate = $child->new()->add($parent);
-        $collate->mod($this->publicKey()->vector()->n());
+        $collate = $child->add($parent);
+        $collate = $collate->mod($this->publicKey()->vector()->n());
         $collate = new Base16(str_pad($collate->encode(), 64, "0", STR_PAD_LEFT));
-        return $collate;
+        return $collate->binary();
     }
 
     /**
@@ -262,7 +265,7 @@ class ExtendedKey implements ExtendedKeyInterface
     private function key2BcNumber(Binary $in, string $which): BcNumber
     {
         try {
-            $bcNumber = BcNumber::Decode($in->get()->base16(false));
+            $bcNumber = BcNumber::Decode($in->encode()->base16());
         } catch (\Error $e) {
             trigger_error(sprintf('[%s][%d] %s', get_class($e), $e->getCode(), $e->getMessage()));
         }

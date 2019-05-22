@@ -26,14 +26,14 @@ interface PrivateKeyInterface
     /**
      * @param string $prop
      * @param $value
-     * @return PrivateKeyInterface
+     * @return static
      */
-    public function set(string $prop, $value): self;
+    public function set(string $prop, $value);
 
     /**
      * @return int|null
      */
-    public function getEllipticCurve(): ?int;
+    public function getEllipticCurveId(): ?int;
 
     /**
      * @return Curves

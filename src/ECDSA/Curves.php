@@ -14,6 +14,10 @@ declare(strict_types=1);
 
 namespace FurqanSiddiqui\BIP32\ECDSA;
 
+use FurqanSiddiqui\ECDSA\Curves\EllipticCurveInterface;
+use FurqanSiddiqui\ECDSA\Curves\Secp256k1\Secp256k1;
+use FurqanSiddiqui\ECDSA\Curves\Secp256k1_OpenSSL\Secp256k1_OpenSSL;
+
 /**
  * Class Curves
  * @package FurqanSiddiqui\BIP32\ECDSA
@@ -31,6 +35,22 @@ class Curves
 
     /** @var callable */
     private $callback;
+
+    /**
+     * @param int $curve
+     * @return EllipticCurveInterface
+     */
+    public static function getInstanceOf(int $curve): EllipticCurveInterface
+    {
+        switch ($curve) {
+            case self::SECP256K1:
+                return Secp256k1::getInstance();
+            case self::SECP256K1_OPENSSL:
+                return Secp256k1_OpenSSL::getInstance();
+        }
+
+        throw new \DomainException('No such ECDSA curve is registered');
+    }
 
     /**
      * Curves constructor.

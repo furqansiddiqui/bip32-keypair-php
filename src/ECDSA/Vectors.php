@@ -28,6 +28,7 @@ class Vectors
      * @param int $curve
      * @param Binary $privateKey
      * @return Vector
+     * @throws \FurqanSiddiqui\ECDSA\Exception\ECDSA_Exception
      * @throws \FurqanSiddiqui\ECDSA\Exception\GenerateVectorException
      * @throws \FurqanSiddiqui\ECDSA\Exception\MathException
      */

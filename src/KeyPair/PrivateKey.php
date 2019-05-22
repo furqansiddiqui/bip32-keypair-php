@@ -52,15 +52,15 @@ class PrivateKey implements PrivateKeyInterface
      */
     public function __debugInfo()
     {
-        return [sprintf('%d-bit Private Key', $this->privateKey->length()->bits())];
+        return [sprintf('%d-bit Private Key', $this->privateKey->size()->bits())];
     }
 
     /**
      * @param string $prop
      * @param $value
-     * @return PrivateKey
+     * @return static
      */
-    public function set(string $prop, $value): PrivateKeyInterface
+    public function set(string $prop, $value)
     {
         if ($prop === "curve") {
             if ($this->extendedKey) {
@@ -81,14 +81,14 @@ class PrivateKey implements PrivateKeyInterface
     /**
      * @return int|null
      */
-    public function getEllipticCurve(): ?int
+    public function getEllipticCurveId(): ?int
     {
         if ($this->curve) {
             return $this->curve;
         }
 
         if ($this->extendedKey) {
-            return $this->extendedKey->getEllipticCurve();
+            return $this->extendedKey->getEllipticCurveId();
         }
 
         return null;
@@ -115,6 +115,7 @@ class PrivateKey implements PrivateKeyInterface
     /**
      * @return PublicKeyInterface
      * @throws \FurqanSiddiqui\BIP32\Exception\PublicKeyException
+     * @throws \FurqanSiddiqui\ECDSA\Exception\ECDSA_Exception
      * @throws \FurqanSiddiqui\ECDSA\Exception\GenerateVectorException
      * @throws \FurqanSiddiqui\ECDSA\Exception\MathException
      */
