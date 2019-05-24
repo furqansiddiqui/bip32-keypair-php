@@ -25,12 +25,6 @@ use FurqanSiddiqui\ECDSA\Vector;
 interface PublicKeyInterface
 {
     /**
-     * PublicKeyInterface constructor.
-     * @param PrivateKeyInterface $keyPair
-     */
-    public function __construct(PrivateKeyInterface $keyPair);
-
-    /**
      * @return bool
      */
     public function hasPrivateKey(): bool;
