@@ -31,6 +31,11 @@ interface PublicKeyInterface
     public function __construct(PrivateKeyInterface $keyPair);
 
     /**
+     * @return bool
+     */
+    public function hasPrivateKey(): bool;
+
+    /**
      * @return Binary
      */
     public function raw(): Binary;
@@ -46,17 +51,17 @@ interface PublicKeyInterface
     public function failSafeCurveValidate(): FailSafeCurveValidate;
 
     /**
-     * @return int
+     * @return int|null
      */
-    public function curve(): int;
+    public function curve(): ?int;
 
     /**
-     * @return Vector
+     * @return Vector|null
      */
-    public function vector(): Vector;
+    public function vector(): ?Vector;
 
     /**
-     * @return PrivateKeyInterface
+     * @return PrivateKeyInterface|null
      */
-    public function privateKey(): PrivateKeyInterface;
+    public function privateKey(): ?PrivateKeyInterface;
 }
