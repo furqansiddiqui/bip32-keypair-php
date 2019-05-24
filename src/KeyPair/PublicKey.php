@@ -62,7 +62,7 @@ class PublicKey implements PublicKeyInterface
     /**
      * @param $x
      * @param $y
-     * @return PublicKey
+     * @return static
      * @throws PublicKeyException
      * @throws \FurqanSiddiqui\ECDSA\Exception\ECDSA_Exception
      * @throws \FurqanSiddiqui\ECDSA\Exception\GenerateVectorException
