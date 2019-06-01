@@ -38,9 +38,9 @@ class ExtendedKey implements ExtendedKeyInterface
     protected $parent;
     /** @var int */
     protected $depth;
-    /** @var Binary */
+    /** @var Base16 */
     protected $privateKey;
-    /** @var Binary */
+    /** @var Base16 */
     protected $chainCode;
     /** @var int */
     protected $curve;
@@ -70,8 +70,8 @@ class ExtendedKey implements ExtendedKeyInterface
             throw new ExtendedKeyException('Cannot extend key to more than 9 depth');
         }
 
-        $this->privateKey = $seed->copy(0, 32)->readOnly(true);
-        $this->chainCode = $seed->copy(32)->readOnly(true);
+        $this->privateKey = $seed->copy(0, 32)->encode()->base16()->readOnly(true);
+        $this->chainCode = $seed->copy(32)->encode()->base16()->readOnly(true);
         $this->validateChildKeyCurveN = true;
     }
 
@@ -115,14 +115,16 @@ class ExtendedKey implements ExtendedKeyInterface
      */
     public function raw(): Binary
     {
-        $raw = $this->privateKey->raw() . $this->chainCode->raw();
+        $raw = new Binary();
+        $raw->append($this->privateKey->binary());
+        $raw->append($this->chainCode->binary());
         return new Binary($raw);
     }
 
     /**
-     * @return Binary
+     * @return Base16
      */
-    public function chainCode(): Binary
+    public function chainCode(): Base16
     {
         return $this->chainCode;
     }
@@ -211,15 +213,16 @@ class ExtendedKey implements ExtendedKeyInterface
     {
         $index = $isHardened ? $index + self::HARDENED_INDEX_BEGIN : $index;
         $indexHex = str_pad(dechex($index), 8, "0", STR_PAD_LEFT);
+        $hmacRawData = new Base16();
         $hmacRawData = $isHardened ?
-            $this->privateKey()->raw()->copy()->encode()->base16()->prepend("00")->append($indexHex) :
-            $this->publicKey()->compressed()->encode()->base16()->append($indexHex);
+            $hmacRawData->append("00")->append($this->privateKey)->append($indexHex) :
+            $hmacRawData->append($this->publicKey()->compressed())->append($indexHex);
 
-        $hmac = new Binary(hash_hmac("sha512", hex2bin($hmacRawData), $this->chainCode->raw(), true));
+        $hmac = new Binary(hash_hmac("sha512", hex2bin($hmacRawData), $this->chainCode->binary()->raw(), true));
         $childPrivateKey = $hmac->copy(0, 32); // Get first 32 bytes
         $childChainCode = $hmac->copy(-32); // Get last 32 bytes as Chain code
 
-        $childExtendedKey = $this->collateChildParentKeys($childPrivateKey, $this->privateKey()->raw());
+        $childExtendedKey = $this->collateChildParentKeys($childPrivateKey, $this->privateKey()->base16()->binary());
         $childExtendedKey->append($childChainCode->raw());
         return new self($childExtendedKey, $this);
     }
@@ -235,10 +238,8 @@ class ExtendedKey implements ExtendedKeyInterface
         $child = $this->key2BcNumber($child, "Child private key");
         $parent = $this->key2BcNumber($parent, "Parent (this) private key");
 
-        $ellipticCurve = Curves::getInstanceOf($this->getEllipticCurveId());
-        $ellipticCurve->
-
-        $n = $this->publicKey()->vector()->n();
+        $ecCurve = Curves::getInstanceOf($this->getEllipticCurveId());
+        $n = new BcNumber(gmp_strval($ecCurve->order(), 10));
         if (!$n->isPositive()) {
             throw new ChildKeyDeriveException('Curve order (n) is not positive');
         }
@@ -251,7 +252,7 @@ class ExtendedKey implements ExtendedKeyInterface
         }
 
         $collate = $child->add($parent);
-        $collate = $collate->mod($this->publicKey()->vector()->n());
+        $collate = $collate->mod($n);
         $collate = new Base16(str_pad($collate->encode(), 64, "0", STR_PAD_LEFT));
         return $collate->binary();
     }

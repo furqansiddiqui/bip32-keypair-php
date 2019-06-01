@@ -14,9 +14,8 @@ declare(strict_types=1);
 
 namespace FurqanSiddiqui\BIP32\ECDSA;
 
-use FurqanSiddiqui\ECDSA\Curves\EllipticCurveInterface;
-use FurqanSiddiqui\ECDSA\Curves\Secp256k1\Secp256k1;
-use FurqanSiddiqui\ECDSA\Curves\Secp256k1_OpenSSL\Secp256k1_OpenSSL;
+use FurqanSiddiqui\ECDSA\Curves\Secp256k1;
+use FurqanSiddiqui\ECDSA\ECC\EllipticCurveInterface;
 
 /**
  * Class Curves
@@ -27,11 +26,9 @@ class Curves
     /** @var array */
     public const INDEX = [
         self::SECP256K1 => "Secp256k1",
-        self::SECP256K1_OPENSSL => "Secp256k1_OpenSSL"
     ];
 
     public const SECP256K1 = 8;
-    public const SECP256K1_OPENSSL = 16;
 
     /** @var callable */
     private $callback;
@@ -45,11 +42,22 @@ class Curves
         switch ($curve) {
             case self::SECP256K1:
                 return Secp256k1::getInstance();
-            case self::SECP256K1_OPENSSL:
-                return Secp256k1_OpenSSL::getInstance();
         }
 
-        throw new \DomainException('No such ECDSA curve is registered');
+        throw new \OutOfBoundsException('No such ECDSA curve is registered');
+    }
+
+    /**
+     * @param EllipticCurveInterface $curve
+     * @return int
+     */
+    public static function getCurveId(EllipticCurveInterface $curve): int
+    {
+        if ($curve instanceof Secp256k1) {
+            return self::SECP256K1;
+        }
+
+        throw new \OutOfBoundsException('No such ECDSA curve is registered');
     }
 
     /**
@@ -79,13 +87,5 @@ class Curves
     public function secp256k1(): void
     {
         $this->select(self::SECP256K1);
-    }
-
-    /**
-     * @return void
-     */
-    public function secp256k1_OpenSSL(): void
-    {
-        $this->select(self::SECP256K1_OPENSSL);
     }
 }

@@ -15,7 +15,7 @@ declare(strict_types=1);
 namespace FurqanSiddiqui\BIP32\Extend;
 
 use FurqanSiddiqui\BIP32\ECDSA\Curves;
-use FurqanSiddiqui\DataTypes\Binary;
+use FurqanSiddiqui\DataTypes\Base16;
 
 /**
  * Interface PrivateKeyInterface
@@ -41,9 +41,9 @@ interface PrivateKeyInterface
     public function curves(): Curves;
 
     /**
-     * @return Binary
+     * @return Base16
      */
-    public function raw(): Binary;
+    public function base16(): Base16;
 
     /**
      * @return PublicKeyInterface

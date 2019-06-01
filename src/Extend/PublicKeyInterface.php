@@ -14,9 +14,7 @@ declare(strict_types=1);
 
 namespace FurqanSiddiqui\BIP32\Extend;
 
-use FurqanSiddiqui\BIP32\ECDSA\FailSafeCurveValidate;
-use FurqanSiddiqui\DataTypes\Binary;
-use FurqanSiddiqui\ECDSA\Vector;
+use FurqanSiddiqui\DataTypes\Base16;
 
 /**
  * Interface PublicKeyInterface
@@ -25,34 +23,24 @@ use FurqanSiddiqui\ECDSA\Vector;
 interface PublicKeyInterface
 {
     /**
+     * @return int|null
+     */
+    public function getEllipticCurveId(): ?int;
+
+    /**
+     * @return Base16
+     */
+    public function full(): Base16;
+
+    /**
+     * @return Base16
+     */
+    public function compressed(): Base16;
+
+    /**
      * @return bool
      */
     public function hasPrivateKey(): bool;
-
-    /**
-     * @return Binary
-     */
-    public function raw(): Binary;
-
-    /**
-     * @return Binary
-     */
-    public function compressed(): Binary;
-
-    /**
-     * @return FailSafeCurveValidate
-     */
-    public function failSafeCurveValidate(): FailSafeCurveValidate;
-
-    /**
-     * @return int|null
-     */
-    public function curve(): ?int;
-
-    /**
-     * @return Vector|null
-     */
-    public function vector(): ?Vector;
 
     /**
      * @return PrivateKeyInterface|null

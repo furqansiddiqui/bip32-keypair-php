@@ -18,6 +18,7 @@ use FurqanSiddiqui\BIP32\ECDSA\Curves;
 use FurqanSiddiqui\BIP32\Extend\ExtendedKeyInterface;
 use FurqanSiddiqui\BIP32\Extend\PrivateKeyInterface;
 use FurqanSiddiqui\BIP32\Extend\PublicKeyInterface;
+use FurqanSiddiqui\DataTypes\Base16;
 use FurqanSiddiqui\DataTypes\Binary;
 
 /**
@@ -37,10 +38,10 @@ class PrivateKey implements PrivateKeyInterface
 
     /**
      * PrivateKey constructor.
-     * @param Binary $entropy
+     * @param Base16 $entropy
      * @param ExtendedKeyInterface|null $extendedKey
      */
-    public function __construct(Binary $entropy, ?ExtendedKeyInterface $extendedKey = null)
+    public function __construct(Base16 $entropy, ?ExtendedKeyInterface $extendedKey = null)
     {
         $this->extendedKey = $extendedKey;
         $this->privateKey = $entropy;
@@ -105,9 +106,9 @@ class PrivateKey implements PrivateKeyInterface
     }
 
     /**
-     * @return Binary
+     * @return Base16
      */
-    public function raw(): Binary
+    public function base16(): Base16
     {
         return $this->privateKey;
     }
@@ -115,9 +116,6 @@ class PrivateKey implements PrivateKeyInterface
     /**
      * @return PublicKeyInterface
      * @throws \FurqanSiddiqui\BIP32\Exception\PublicKeyException
-     * @throws \FurqanSiddiqui\ECDSA\Exception\ECDSA_Exception
-     * @throws \FurqanSiddiqui\ECDSA\Exception\GenerateVectorException
-     * @throws \FurqanSiddiqui\ECDSA\Exception\MathException
      */
     public function publicKey(): PublicKeyInterface
     {

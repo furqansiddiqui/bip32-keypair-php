@@ -29,7 +29,7 @@ class BIP32
      */
     public static function PrivateKey(Base16 $entropy): PrivateKey
     {
-        return new PrivateKey($entropy->binary());
+        return new PrivateKey($entropy);
     }
 
     /**

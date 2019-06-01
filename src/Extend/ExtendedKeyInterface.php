@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace FurqanSiddiqui\BIP32\Extend;
 
 use FurqanSiddiqui\BIP32\ECDSA\Curves;
+use FurqanSiddiqui\DataTypes\Base16;
 use FurqanSiddiqui\DataTypes\Binary;
 
 /**
@@ -41,9 +42,9 @@ interface ExtendedKeyInterface
     public function set(string $prop, $value): self;
 
     /**
-     * @return Binary
+     * @return Base16
      */
-    public function chainCode(): Binary;
+    public function chainCode(): Base16;
 
     /**
      * @return PrivateKeyInterface
