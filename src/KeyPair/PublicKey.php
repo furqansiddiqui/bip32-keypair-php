@@ -116,6 +116,13 @@ class PublicKey implements PublicKeyInterface
         return null;
     }
 
+    /**
+     * @return \FurqanSiddiqui\ECDSA\ECC\PublicKey
+     */
+    public function getEllipticCurvePubKeyObj(): \FurqanSiddiqui\ECDSA\ECC\PublicKey
+    {
+        return $this->eccPublicKeyObj;
+    }
 
     /**
      * @return Base16
