@@ -14,8 +14,8 @@ declare(strict_types=1);
 
 namespace FurqanSiddiqui\BIP32\Extend;
 
+use Comely\DataTypes\Buffer\Base16;
 use FurqanSiddiqui\BIP32\ECDSA\Curves;
-use FurqanSiddiqui\DataTypes\Base16;
 
 /**
  * Interface PrivateKeyInterface

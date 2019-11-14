@@ -14,11 +14,11 @@ declare(strict_types=1);
 
 namespace FurqanSiddiqui\BIP32\KeyPair;
 
+use Comely\DataTypes\Buffer\Base16;
 use FurqanSiddiqui\BIP32\ECDSA\Curves;
 use FurqanSiddiqui\BIP32\Exception\PublicKeyException;
 use FurqanSiddiqui\BIP32\Extend\PrivateKeyInterface;
 use FurqanSiddiqui\BIP32\Extend\PublicKeyInterface;
-use FurqanSiddiqui\DataTypes\Base16;
 use FurqanSiddiqui\ECDSA\ECC\EllipticCurveInterface;
 
 /**

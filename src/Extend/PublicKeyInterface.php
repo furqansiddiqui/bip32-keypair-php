@@ -14,7 +14,7 @@ declare(strict_types=1);
 
 namespace FurqanSiddiqui\BIP32\Extend;
 
-use FurqanSiddiqui\DataTypes\Base16;
+use Comely\DataTypes\Buffer\Base16;
 
 /**
  * Interface PublicKeyInterface

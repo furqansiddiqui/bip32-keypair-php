@@ -14,9 +14,9 @@ declare(strict_types=1);
 
 namespace FurqanSiddiqui\BIP32\Extend;
 
+use Comely\DataTypes\Buffer\Base16;
+use Comely\DataTypes\Buffer\Binary;
 use FurqanSiddiqui\BIP32\ECDSA\Curves;
-use FurqanSiddiqui\DataTypes\Base16;
-use FurqanSiddiqui\DataTypes\Binary;
 
 /**
  * Interface ExtendedKeyInterface

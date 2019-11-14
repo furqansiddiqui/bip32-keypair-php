@@ -14,8 +14,8 @@ declare(strict_types=1);
 
 namespace FurqanSiddiqui\BIP32;
 
+use Comely\DataTypes\Buffer\Base16;
 use FurqanSiddiqui\BIP32\KeyPair\PrivateKey;
-use FurqanSiddiqui\DataTypes\Base16;
 
 /**
  * Class BIP32

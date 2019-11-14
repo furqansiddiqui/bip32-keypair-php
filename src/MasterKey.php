@@ -14,7 +14,7 @@ declare(strict_typest=1);
 
 namespace FurqanSiddiqui\BIP32;
 
-use FurqanSiddiqui\DataTypes\Base16;
+use Comely\DataTypes\Buffer\Base16;
 
 /**
  * Class MasterKey

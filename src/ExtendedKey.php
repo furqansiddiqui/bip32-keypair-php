@@ -14,7 +14,9 @@ declare(strict_types=1);
 
 namespace FurqanSiddiqui\BIP32;
 
-use FurqanSiddiqui\BcMath\BcNumber;
+use Comely\DataTypes\BcNumber;
+use Comely\DataTypes\Buffer\Base16;
+use Comely\DataTypes\Buffer\Binary;
 use FurqanSiddiqui\BIP32\ECDSA\Curves;
 use FurqanSiddiqui\BIP32\Exception\ChildKeyDeriveException;
 use FurqanSiddiqui\BIP32\Exception\ExtendedKeyException;
@@ -22,8 +24,6 @@ use FurqanSiddiqui\BIP32\Extend\ExtendedKeyInterface;
 use FurqanSiddiqui\BIP32\Extend\PrivateKeyInterface;
 use FurqanSiddiqui\BIP32\Extend\PublicKeyInterface;
 use FurqanSiddiqui\BIP32\KeyPair\PrivateKey;
-use FurqanSiddiqui\DataTypes\Base16;
-use FurqanSiddiqui\DataTypes\Binary;
 
 /**
  * Class ExtendedKey
@@ -70,8 +70,8 @@ class ExtendedKey implements ExtendedKeyInterface
             throw new ExtendedKeyException('Cannot extend key to more than 9 depth');
         }
 
-        $this->privateKey = $seed->copy(0, 32)->encode()->base16()->readOnly(true);
-        $this->chainCode = $seed->copy(32)->encode()->base16()->readOnly(true);
+        $this->privateKey = $seed->copy(0, 32)->base16()->readOnly(true);
+        $this->chainCode = $seed->copy(32)->base16()->readOnly(true);
         $this->validateChildKeyCurveN = true;
     }
 
@@ -266,7 +266,7 @@ class ExtendedKey implements ExtendedKeyInterface
     private function key2BcNumber(Binary $in, string $which): BcNumber
     {
         try {
-            $bcNumber = BcNumber::Decode($in->encode()->base16());
+            $bcNumber = BcNumber::fromBase16($in->base16());
         } catch (\Error $e) {
             trigger_error(sprintf('[%s][%d] %s', get_class($e), $e->getCode(), $e->getMessage()));
         }
