@@ -15,7 +15,6 @@ declare(strict_types=1);
 namespace FurqanSiddiqui\BIP32\KeyPair;
 
 use Comely\DataTypes\Buffer\Base16;
-use Comely\DataTypes\Buffer\Binary;
 use FurqanSiddiqui\BIP32\ECDSA\Curves;
 use FurqanSiddiqui\BIP32\Extend\ExtendedKeyInterface;
 use FurqanSiddiqui\BIP32\Extend\PrivateKeyInterface;
@@ -29,7 +28,7 @@ class PrivateKey implements PrivateKeyInterface
 {
     /** @var null|ExtendedKeyInterface */
     protected $extendedKey;
-    /** @var Binary */
+    /** @var Base16 */
     protected $privateKey;
     /** @var null|int */
     protected $curve;
@@ -53,7 +52,7 @@ class PrivateKey implements PrivateKeyInterface
      */
     public function __debugInfo()
     {
-        return [sprintf('%d-bit Private Key', $this->privateKey->size()->bits())];
+        return [sprintf('%d-bit Private Key', $this->privateKey->binary()->size()->bits())];
     }
 
     /**
