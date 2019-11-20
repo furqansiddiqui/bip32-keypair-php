@@ -118,7 +118,7 @@ class ExtendedKey implements ExtendedKeyInterface
         $raw = new Binary();
         $raw->append($this->privateKey->binary());
         $raw->append($this->chainCode->binary());
-        return new Binary($raw);
+        return $raw;
     }
 
     /**
@@ -213,12 +213,12 @@ class ExtendedKey implements ExtendedKeyInterface
     {
         $index = $isHardened ? $index + self::HARDENED_INDEX_BEGIN : $index;
         $indexHex = str_pad(dechex($index), 8, "0", STR_PAD_LEFT);
-        $hmacRawData = new Base16();
         $hmacRawData = $isHardened ?
-            $hmacRawData->append("00")->append($this->privateKey)->append($indexHex) :
-            $hmacRawData->append($this->publicKey()->compressed())->append($indexHex);
+            "00" . $this->privateKey->hexits(false) . $indexHex :
+            $this->publicKey()->compressed()->hexits(false) . $indexHex;
+        $hmacRawData = new Base16($hmacRawData);
 
-        $hmac = new Binary(hash_hmac("sha512", hex2bin($hmacRawData), $this->chainCode->binary()->raw(), true));
+        $hmac = new Binary(hash_hmac("sha512", $hmacRawData->binary()->raw(), $this->chainCode->binary()->raw(), true));
         $childPrivateKey = $hmac->copy(0, 32); // Get first 32 bytes
         $childChainCode = $hmac->copy(-32); // Get last 32 bytes as Chain code
 
@@ -253,7 +253,7 @@ class ExtendedKey implements ExtendedKeyInterface
 
         $collate = $child->add($parent);
         $collate = $collate->mod($n);
-        $collate = new Base16(str_pad($collate->encode(), 64, "0", STR_PAD_LEFT));
+        $collate = new Base16(str_pad($collate->encode()->hexits(), 64, "0", STR_PAD_LEFT));
         return $collate->binary();
     }
 
