@@ -3,7 +3,7 @@
  * This file is a part of "furqansiddiqui/bip32-keypair-php" package.
  * https://github.com/furqansiddiqui/bip32-keypair-php
  *
- * Copyright (c) 2019 Furqan A. Siddiqui <hello@furqansiddiqui.com>
+ * Copyright (c) 2020 Furqan A. Siddiqui <hello@furqansiddiqui.com>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code or visit following link:
@@ -15,7 +15,9 @@ declare(strict_types=1);
 namespace FurqanSiddiqui\BIP32\KeyPair;
 
 use Comely\DataTypes\Buffer\Base16;
+use Comely\DataTypes\Buffer\Binary;
 use FurqanSiddiqui\BIP32\ECDSA\Curves;
+use FurqanSiddiqui\BIP32\Exception\ChildKeyDeriveException;
 use FurqanSiddiqui\BIP32\Exception\PublicKeyException;
 use FurqanSiddiqui\BIP32\Extend\PrivateKeyInterface;
 use FurqanSiddiqui\BIP32\Extend\PublicKeyInterface;
@@ -35,6 +37,8 @@ class PublicKey implements PublicKeyInterface
     protected $eccPublicKeyObj;
     /** @var null|Base16 */
     private $fingerPrint;
+    /** @var null|Base16 */
+    private $chainCode;
 
     /**
      * PublicKey constructor.
@@ -42,9 +46,10 @@ class PublicKey implements PublicKeyInterface
      * @param EllipticCurveInterface|null $curve
      * @param Base16|null $publicKey
      * @param bool|null $pubKeyArgIsCompressed
+     * @param Base16|null $chainCode
      * @throws PublicKeyException
      */
-    public function __construct(?PrivateKeyInterface $privateKey, ?EllipticCurveInterface $curve = null, ?Base16 $publicKey = null, ?bool $pubKeyArgIsCompressed = null)
+    public function __construct(?PrivateKeyInterface $privateKey, ?EllipticCurveInterface $curve = null, ?Base16 $publicKey = null, ?bool $pubKeyArgIsCompressed = null, ?Base16 $chainCode = null)
     {
         $eccCurve = null; // ECDSA curve instance
 
@@ -158,6 +163,34 @@ class PublicKey implements PublicKeyInterface
 
         $this->fingerPrint = $fingerPrint->base16();
         return $this->fingerPrint;
+    }
+
+    public function deriveChildPublicKey(int $index): self
+    {
+        if ($index >= pow(2, 31)) {
+            throw new ChildKeyDeriveException('Parent public key to child public key method cannot use hardened index');
+        }
+
+        // Dec index to Base16
+        $indexHex = str_pad(dechex($index), 8, "0", STR_PAD_LEFT);
+
+        // Chain Code
+        if (!$this->chainCode) {
+            throw new ChildKeyDeriveException('Chain code for this public key is not defined');
+        }
+
+        // Get ECDSA curve
+        $curve = Curves::getInstanceOf($this->getEllipticCurveId());
+
+        $data = new Base16();
+        $data->append($this->compressed()->hexits(false));
+        $data->append($indexHex);
+
+        $hmac = new Binary(hash_hmac("sha512", $data->binary()->raw(), $this->chainCode->binary()->raw(), true));
+        $iL = $hmac->copy(0, 32); // Get first 32 bytes
+        $iR = $hmac->copy(-32); // Get last 32 bytes
+
+
     }
 
     /**
