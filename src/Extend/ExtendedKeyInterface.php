@@ -76,4 +76,16 @@ interface ExtendedKeyInterface
      * @return ExtendedKeyInterface|null
      */
     public function parent(): ?ExtendedKeyInterface;
+
+    /**
+     * @param int $versionBytes
+     * @return Binary
+     */
+    public function serializePublicKey(int $versionBytes): Binary;
+
+    /**
+     * @param int $versionBytes
+     * @return Binary
+     */
+    public function serializePrivateKey(int $versionBytes): Binary;
 }

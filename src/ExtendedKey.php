@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace FurqanSiddiqui\BIP32;
 
+use Comely\DataTypes\BcMath\BcMath;
 use Comely\DataTypes\BcNumber;
 use Comely\DataTypes\Buffer\Base16;
 use Comely\DataTypes\Buffer\Binary;
@@ -47,6 +48,8 @@ class ExtendedKey implements ExtendedKeyInterface
     /** @var bool */
     protected $validateChildKeyCurveN;
 
+    /** @var null|Base16 */
+    protected $childNumber;
     /** @var null|PrivateKeyInterface */
     protected $privateKeyInstance;
 
@@ -54,9 +57,10 @@ class ExtendedKey implements ExtendedKeyInterface
      * ExtendedKey constructor.
      * @param Binary $seed
      * @param ExtendedKeyInterface|null $parent
+     * @param Base16|null $childNumber
      * @throws ExtendedKeyException
      */
-    public function __construct(Binary $seed, ?ExtendedKeyInterface $parent = null)
+    public function __construct(Binary $seed, ?ExtendedKeyInterface $parent = null, ?Base16 $childNumber = null)
     {
         if ($seed->size()->bits() !== static::BITWISE_SEED_LENGTH) {
             throw new ExtendedKeyException(
@@ -73,6 +77,7 @@ class ExtendedKey implements ExtendedKeyInterface
         $this->privateKey = $seed->copy(0, 32)->base16()->readOnly(true);
         $this->chainCode = $seed->copy(32)->base16()->readOnly(true);
         $this->validateChildKeyCurveN = true;
+        $this->childNumber = $childNumber;
     }
 
     /**
@@ -232,7 +237,63 @@ class ExtendedKey implements ExtendedKeyInterface
 
         $childExtendedKey = $this->collateChildParentKeys($childPrivateKey, $this->privateKey()->base16()->binary());
         $childExtendedKey->append($childChainCode->raw());
-        return new self($childExtendedKey, $this);
+        return new self($childExtendedKey, $this, (new Base16($indexHex))->readOnly(true));
+    }
+
+    /**
+     * @param int $versionBytes
+     * @return Binary
+     */
+    public function serializePublicKey(int $versionBytes): Binary
+    {
+        return $this->serializeKey($versionBytes, $this->publicKey()->compressed());
+    }
+
+    /**
+     * @param int $versionBytes
+     * @return Binary
+     */
+    public function serializePrivateKey(int $versionBytes): Binary
+    {
+        return $this->serializeKey($versionBytes, new Base16("00" . $this->privateKey->hexits(false)));
+    }
+
+    /**
+     * @param int $versionBytes
+     * @param Base16 $key
+     * @return Binary
+     */
+    private function serializeKey(int $versionBytes, Base16 $key): Binary
+    {
+        $serialized = new Base16();
+
+        // Version Byte
+        $serialized->append(BcMath::Encode($versionBytes));
+
+        // Depth
+        $serialized->append(BcMath::Encode($this->depth));
+
+        // Fingerprint
+        if ($this->parent()) { // Has parent?
+            $serialized->append($this->parent()->publicKey()->fingerPrint()->hexits());
+        } else { // Master key?
+            $serialized->append("00000000");
+        }
+
+        // Child number
+        if ($this->childNumber) {
+            $serialized->append($this->childNumber->hexits(false));
+        } else { // Master key?
+            $serialized->append("00000000");
+        }
+
+        // Chain Code
+        $serialized->append($this->chainCode->hexits(false));
+
+        // Key
+        $serialized->append($key->hexits(false));
+
+        return $serialized->binary();
     }
 
     /**
