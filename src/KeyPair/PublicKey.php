@@ -33,6 +33,8 @@ class PublicKey implements PublicKeyInterface
     protected $curve;
     /** @var \FurqanSiddiqui\ECDSA\ECC\PublicKey */
     protected $eccPublicKeyObj;
+    /** @var null|Base16 */
+    private $fingerPrint;
 
     /**
      * PublicKey constructor.
@@ -145,11 +147,17 @@ class PublicKey implements PublicKeyInterface
      */
     public function fingerPrint(): Base16
     {
+        if ($this->fingerPrint) {
+            return $this->fingerPrint;
+
+        }
+
         $fingerPrint = $this->compressed()->binary()
             ->hash()->sha256()
             ->hash()->ripeMd160(4);
 
-        return $fingerPrint->base16();
+        $this->fingerPrint = $fingerPrint->base16();
+        return $this->fingerPrint;
     }
 
     /**
