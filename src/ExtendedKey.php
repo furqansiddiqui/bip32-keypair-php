@@ -77,7 +77,7 @@ class ExtendedKey implements ExtendedKeyInterface
         $this->privateKey = $seed->copy(0, 32)->base16()->readOnly(true);
         $this->chainCode = $seed->copy(32)->base16()->readOnly(true);
         $this->validateChildKeyCurveN = true;
-        $this->childNumber = $childNumber->readOnly(true);
+        $this->childNumber = $childNumber ? $childNumber->readOnly(true) : null;
     }
 
     /**
