@@ -78,6 +78,11 @@ interface ExtendedKeyInterface
     public function parent(): ?ExtendedKeyInterface;
 
     /**
+     * @return Base16|null
+     */
+    public function childNumber(): ?Base16;
+
+    /**
      * @param int $versionBytes
      * @return Binary
      */
