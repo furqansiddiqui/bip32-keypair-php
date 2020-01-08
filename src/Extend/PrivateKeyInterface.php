@@ -49,4 +49,9 @@ interface PrivateKeyInterface
      * @return PublicKeyInterface
      */
     public function publicKey(): PublicKeyInterface;
+
+    /**
+     * @return ExtendedKeyInterface|null
+     */
+    public function ekd(): ?ExtendedKeyInterface;
 }

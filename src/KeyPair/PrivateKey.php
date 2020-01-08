@@ -124,4 +124,12 @@ class PrivateKey implements PrivateKeyInterface
 
         return $this->publicKey;
     }
+
+    /**
+     * @return ExtendedKeyInterface|null
+     */
+    public function ekd(): ?ExtendedKeyInterface
+    {
+        return $this->extendedKey;
+    }
 }
