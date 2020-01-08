@@ -71,4 +71,9 @@ interface ExtendedKeyInterface
      * @return ExtendedKeyInterface
      */
     public function derivePath($path): self;
+
+    /**
+     * @return ExtendedKeyInterface|null
+     */
+    public function parent(): ?ExtendedKeyInterface;
 }

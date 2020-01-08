@@ -176,6 +176,14 @@ class ExtendedKey implements ExtendedKeyInterface
     }
 
     /**
+     * @return ExtendedKeyInterface|null
+     */
+    public function parent(): ?ExtendedKeyInterface
+    {
+        return $this->parent;
+    }
+
+    /**
      * @param $path
      * @return ExtendedKey
      * @throws ExtendedKeyException
