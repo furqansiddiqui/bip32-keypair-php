@@ -10,7 +10,7 @@
  * https://github.com/furqansiddiqui/bip32-keypair-php/blob/master/LICENSE
  */
 
-declare(strict_typest=1);
+declare(strict_types=1);
 
 namespace FurqanSiddiqui\BIP32;
 
