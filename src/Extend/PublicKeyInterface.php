@@ -46,4 +46,9 @@ interface PublicKeyInterface
      * @return PrivateKeyInterface|null
      */
     public function privateKey(): ?PrivateKeyInterface;
+
+    /**
+     * @return Base16
+     */
+    public function fingerPrint(): Base16;
 }

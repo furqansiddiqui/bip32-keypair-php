@@ -141,6 +141,18 @@ class PublicKey implements PublicKeyInterface
     }
 
     /**
+     * @return Base16
+     */
+    public function fingerPrint(): Base16
+    {
+        $fingerPrint = $this->compressed()->binary()
+            ->hash()->sha256()
+            ->hash()->ripeMd160(4);
+
+        return $fingerPrint->base16();
+    }
+
+    /**
      * @return bool
      */
     public function hasPrivateKey(): bool
