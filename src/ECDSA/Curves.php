@@ -1,9 +1,9 @@
 <?php
-/**
- * This file is a part of "furqansiddiqui/bip32-keypair-php" package.
- * https://github.com/furqansiddiqui/bip32-keypair-php
+/*
+ * This file is a part of "furqansiddiqui/ecdsa-php" package.
+ * https://github.com/furqansiddiqui/ecdsa-php
  *
- * Copyright (c) 2020 Furqan A. Siddiqui <hello@furqansiddiqui.com>
+ * Copyright (c) Furqan A. Siddiqui <hello@furqansiddiqui.com>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code or visit following link:
