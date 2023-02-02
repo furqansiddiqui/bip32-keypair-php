@@ -50,6 +50,14 @@ class Bits32 extends AbstractFixedLenBuffer
      */
     public function toInt(): int
     {
-        return unpack("N", ltrim($this->data, "\0"))[1];
+        return unpack("N", $this->data)[1];
+    }
+
+    /**
+     * @return bool
+     */
+    public function isZeroBytes(): bool
+    {
+        return $this->toInt() === 0;
     }
 }

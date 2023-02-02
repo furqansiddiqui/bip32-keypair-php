@@ -14,8 +14,19 @@ declare(strict_types=1);
 
 namespace FurqanSiddiqui\BIP32;
 
-use Comely\DataTypes\Buffer\Base16;
+use Comely\Buffer\AbstractByteArray;
+use Comely\Buffer\Bytes32;
+use FurqanSiddiqui\BIP32\Buffers\Bits32;
+use FurqanSiddiqui\BIP32\Buffers\Bits512;
+use FurqanSiddiqui\BIP32\Buffers\SerializedBIP32Key;
+use FurqanSiddiqui\BIP32\Exception\KeyPairException;
+use FurqanSiddiqui\BIP32\KeyPair\ExtendedKeyPair;
+use FurqanSiddiqui\BIP32\KeyPair\MasterKeyPair;
 use FurqanSiddiqui\BIP32\KeyPair\PrivateKey;
+use FurqanSiddiqui\BIP32\KeyPair\PublicKey;
+use FurqanSiddiqui\BIP32\Networks\AbstractNetworkConfig;
+use FurqanSiddiqui\ECDSA\ECC\EllipticCurveInterface;
+use FurqanSiddiqui\ECDSA\KeyPair;
 
 /**
  * Class BIP32
@@ -24,31 +35,147 @@ use FurqanSiddiqui\BIP32\KeyPair\PrivateKey;
 class BIP32
 {
     /**
-     * @param Base16 $entropy
-     * @return PrivateKey
+     * @param \FurqanSiddiqui\ECDSA\ECC\EllipticCurveInterface $ecc
+     * @param \FurqanSiddiqui\BIP32\Networks\AbstractNetworkConfig $config
      */
-    public static function PrivateKey(Base16 $entropy): PrivateKey
+    public function __construct(
+        public readonly EllipticCurveInterface $ecc,
+        public readonly AbstractNetworkConfig  $config
+    )
     {
-        return new PrivateKey($entropy);
     }
 
     /**
-     * @param string $hexits
-     * @return PrivateKey
+     * @return \Comely\Buffer\Bytes32
+     * @throws \FurqanSiddiqui\BIP32\Exception\KeyPairException
      */
-    public static function PrivateKeyFromHexits(string $hexits): PrivateKey
+    public function generateSecureEntropy(): Bytes32
     {
-        return self::PrivateKey(new Base16($hexits));
+        try {
+            return new Bytes32(random_bytes(32));
+        } catch (\Exception) {
+            throw new KeyPairException('Failed to generate PRNG random 32 bytes');
+        }
     }
 
     /**
-     * @param string $seed
-     * @param string $hmacKey
-     * @return MasterKey
-     * @throws Exception\ExtendedKeyException
+     * @param \Comely\Buffer\Bytes32 $entropy
+     * @return \FurqanSiddiqui\BIP32\KeyPair\PrivateKey
      */
-    public static function MasterKey(string $seed, string $hmacKey): MasterKey
+    public function privateKeyFromEntropy(Bytes32 $entropy): PrivateKey
     {
-        return new MasterKey(new Base16($seed), $hmacKey);
+        return new PrivateKey($this, new KeyPair($this->ecc, $entropy));
+    }
+
+    /**
+     * @param \Comely\Buffer\AbstractByteArray $publicKey
+     * @return \FurqanSiddiqui\BIP32\KeyPair\PublicKey
+     * @throws \FurqanSiddiqui\ECDSA\Exception\KeyPairException
+     */
+    public function publicKeyFromDER(AbstractByteArray $publicKey): PublicKey
+    {
+        return new PublicKey($this, \FurqanSiddiqui\ECDSA\ECC\PublicKey::fromDER($publicKey));
+    }
+
+    /**
+     * @param \Comely\Buffer\AbstractByteArray $publicKey
+     * @return \FurqanSiddiqui\BIP32\KeyPair\PublicKey
+     * @throws \FurqanSiddiqui\ECDSA\Exception\KeyPairException
+     */
+    public function publicKeyFromUncompressed(AbstractByteArray $publicKey): PublicKey
+    {
+        return $this->publicKeyFromDER($publicKey);
+    }
+
+    /**
+     * @param \Comely\Buffer\AbstractByteArray $compressedPubKey
+     * @return \FurqanSiddiqui\BIP32\KeyPair\PublicKey
+     * @throws \FurqanSiddiqui\BIP32\Exception\KeyPairException
+     */
+    public function publicKeyFromIncomplete(AbstractByteArray $compressedPubKey): PublicKey
+    {
+        if ($compressedPubKey->len() !== 33) {
+            throw new KeyPairException('Compressed public key must be 33 bytes long');
+        }
+
+        $compressedPubKey = $compressedPubKey->raw();
+        if (!in_array($compressedPubKey[0], ["\x02", "\x03"])) {
+            throw new KeyPairException('Invalid compressed public key prefix');
+        }
+
+        return new PublicKey(
+            $this,
+            new \FurqanSiddiqui\ECDSA\ECC\PublicKey(bin2hex(substr($compressedPubKey, 1)), bin2hex($compressedPubKey[0]))
+        );
+    }
+
+    /**
+     * @param \FurqanSiddiqui\BIP32\Buffers\SerializedBIP32Key|\Comely\Buffer\AbstractByteArray $ser
+     * @return \FurqanSiddiqui\BIP32\KeyPair\MasterKeyPair|\FurqanSiddiqui\BIP32\KeyPair\ExtendedKeyPair
+     * @throws \FurqanSiddiqui\BIP32\Exception\UnserializeBIP32KeyException
+     */
+    public function unserialize(SerializedBIP32Key|AbstractByteArray $ser): MasterKeyPair|ExtendedKeyPair
+    {
+        if (!$ser instanceof SerializedBIP32Key) {
+            $ser = new SerializedBIP32Key($ser->raw());
+        }
+
+        return MasterKeyPair::Unserialize($this, $ser);
+    }
+
+    /**
+     * @param \Comely\Buffer\AbstractByteArray $entropy
+     * @param string|null $overrideConfigSeed
+     * @return \FurqanSiddiqui\BIP32\Buffers\Bits512
+     */
+    public function hmacEntropy(AbstractByteArray $entropy, ?string $overrideConfigSeed = null): Bits512
+    {
+        return new Bits512(hash_hmac("sha512", $entropy->raw(), $overrideConfigSeed ?? $this->config->hmacSeed, true));
+    }
+
+    /**
+     * @param \Comely\Buffer\Bytes32 $prv
+     * @return \FurqanSiddiqui\BIP32\KeyPair\MasterKeyPair
+     * @throws \FurqanSiddiqui\BIP32\Exception\UnserializeBIP32KeyException
+     */
+    public function masterKeyFromEntropy(Bytes32 $prv): MasterKeyPair
+    {
+        return $this->masterKeyFromSeed($this->hmacEntropy($prv));
+    }
+
+    /**
+     * @param \FurqanSiddiqui\BIP32\Buffers\Bits512 $seed
+     * @return \FurqanSiddiqui\BIP32\KeyPair\MasterKeyPair
+     * @throws \FurqanSiddiqui\BIP32\Exception\UnserializeBIP32KeyException
+     */
+    public function masterKeyFromSeed(Bits512 $seed): MasterKeyPair
+    {
+        return new MasterKeyPair(
+            $this,
+            new PrivateKey($this, new KeyPair($this->ecc, $seed->copy(0, 32))),
+            0,
+            Bits32::fromInteger(0),
+            new Bits32(substr("\0", 4)),
+            new Bytes32($seed->copy(32)->raw())
+        );
+    }
+
+    /**
+     * @param \FurqanSiddiqui\BIP32\KeyPair\PrivateKey|\FurqanSiddiqui\BIP32\KeyPair\PublicKey $key
+     * @param \Comely\Buffer\Bytes32 $chainCode
+     * @param int $depth
+     * @param \FurqanSiddiqui\BIP32\Buffers\Bits32 $childNum
+     * @param \FurqanSiddiqui\BIP32\Buffers\Bits32 $parentPubFp
+     * @return \FurqanSiddiqui\BIP32\KeyPair\ExtendedKeyPair
+     */
+    public function extendedKey(
+        PrivateKey|PublicKey $key,
+        Bytes32              $chainCode,
+        int                  $depth,
+        Bits32               $childNum,
+        Bits32               $parentPubFp
+    ): ExtendedKeyPair
+    {
+        return new ExtendedKeyPair($this, $key, $depth, $childNum, $parentPubFp, $chainCode);
     }
 }

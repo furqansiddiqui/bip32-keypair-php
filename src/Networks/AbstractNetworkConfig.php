@@ -54,4 +54,12 @@ abstract class AbstractNetworkConfig
      * @return static
      */
     abstract public static function createConfigInstance(): static;
+
+    /**
+     * @return \GMP
+     */
+    public function secp256k1_nOrder(): \GMP
+    {
+        return gmp_init("fffffffffffffffffffffffffffffffebaaedce6af48a03bbfd25e8cd0364141", 16);
+    }
 }
