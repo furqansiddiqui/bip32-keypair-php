@@ -24,6 +24,18 @@ abstract class AbstractNetworkConfig
     protected static self $instance;
 
     /**
+     * @return static
+     */
+    public static function loadConfig(): static
+    {
+        if (isset(static::$instance)) {
+            return static::$instance;
+        }
+
+        return static::$instance = static::createConfigInstance();
+    }
+
+    /**
      * @param \FurqanSiddiqui\BIP32\Buffers\Bits32 $exportPrivateKeyPrefix
      * @param \FurqanSiddiqui\BIP32\Buffers\Bits32 $exportPublicKeyPrefix
      * @param int $hardenedIndexBeginsFrom
@@ -41,5 +53,5 @@ abstract class AbstractNetworkConfig
     /**
      * @return static
      */
-    abstract public static function loadConfig(): static;
+    abstract public static function createConfigInstance(): static;
 }

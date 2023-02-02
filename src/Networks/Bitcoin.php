@@ -25,12 +25,8 @@ class Bitcoin extends AbstractNetworkConfig
     /**
      * @return static
      */
-    public static function loadConfig(): static
+    public static function createConfigInstance(): static
     {
-        if (isset(static::$instance)) {
-            return static::$instance;
-        }
-
         return static::$instance = new static(
             exportPrivateKeyPrefix: new Bits32(hex2bin("0488ADE4")),
             exportPublicKeyPrefix: new Bits32(hex2bin("0488B21E")),
