@@ -14,37 +14,26 @@ declare(strict_types=1);
 
 namespace FurqanSiddiqui\BIP32\KeyPair;
 
-use Comely\DataTypes\Buffer\Base16;
-use FurqanSiddiqui\BIP32\ECDSA\Curves;
-use FurqanSiddiqui\BIP32\Extend\ExtendedKeyInterface;
-use FurqanSiddiqui\BIP32\Extend\PrivateKeyInterface;
-use FurqanSiddiqui\BIP32\Extend\PublicKeyInterface;
+use Comely\Buffer\Bytes32;
+use FurqanSiddiqui\BIP32\BIP32;
+use FurqanSiddiqui\BIP32\Buffers\Signature;
+use FurqanSiddiqui\ECDSA\KeyPair;
 
 /**
  * Class PrivateKey
  * @package FurqanSiddiqui\BIP32\KeyPair
  */
-class PrivateKey implements PrivateKeyInterface
+class PrivateKey
 {
-    /** @var null|ExtendedKeyInterface */
-    protected $extendedKey;
-    /** @var Base16 */
-    protected $privateKey;
-    /** @var null|int */
-    protected $curve;
-    /** @var null|PublicKeyInterface */
-    protected $publicKey;
-
     /**
-     * PrivateKey constructor.
-     * @param Base16 $entropy
-     * @param ExtendedKeyInterface|null $extendedKey
+     * @param \FurqanSiddiqui\BIP32\BIP32 $bip32
+     * @param \FurqanSiddiqui\ECDSA\KeyPair $eccPrivateKey
      */
-    public function __construct(Base16 $entropy, ?ExtendedKeyInterface $extendedKey = null)
+    public function __construct(
+        public readonly BIP32   $bip32,
+        public readonly KeyPair $eccPrivateKey,
+    )
     {
-        $this->extendedKey = $extendedKey;
-        $this->privateKey = $entropy;
-        $this->privateKey->readOnly(true); // Set buffer to read-only state
     }
 
     /**
@@ -52,84 +41,27 @@ class PrivateKey implements PrivateKeyInterface
      */
     public function __debugInfo()
     {
-        return [sprintf('%d-bit Private Key', $this->privateKey->binary()->size()->bits())];
+        return [sprintf('%d-bit Private Key', $this->eccPrivateKey->private->len() * 8)];
     }
 
     /**
-     * @param string $prop
-     * @param $value
-     * @return static
+     * @param \Comely\Buffer\Bytes32 $msgHash
+     * @param \Comely\Buffer\Bytes32|null $nonceK
+     * @return \FurqanSiddiqui\BIP32\Buffers\Signature
      */
-    public function set(string $prop, $value)
+    public function sign(Bytes32 $msgHash, ?Bytes32 $nonceK = null): Signature
     {
-        if ($prop === "curve") {
-            if ($this->extendedKey) {
-                throw new \DomainException('Cannot change ECDSA curve for Extended private keys');
-            }
-
-            if (!is_int($value) || !in_array($value, array_keys(Curves::INDEX))) {
-                throw new \InvalidArgumentException('Cannot use an invalid ECDSA curve');
-            }
-
-            $this->curve = $value;
-            return $this;
-        }
-
-        throw new \DomainException('Cannot set value of inaccessible property');
+        return new Signature($this->bip32, $this->eccPrivateKey->sign($msgHash, $nonceK));
     }
 
     /**
-     * @return int|null
+     * @param \Comely\Buffer\Bytes32 $msgHash
+     * @param \Comely\Buffer\Bytes32|null $nonceK
+     * @return \FurqanSiddiqui\BIP32\Buffers\Signature
+     * @throws \FurqanSiddiqui\ECDSA\Exception\SignatureException
      */
-    public function getEllipticCurveId(): ?int
+    public function signRecoverable(Bytes32 $msgHash, ?Bytes32 $nonceK = null): Signature
     {
-        if ($this->curve) {
-            return $this->curve;
-        }
-
-        if ($this->extendedKey) {
-            return $this->extendedKey->getEllipticCurveId();
-        }
-
-        return null;
-    }
-
-    /**
-     * @return Curves
-     */
-    public function curves(): Curves
-    {
-        return new Curves(function (int $curve) {
-            $this->set("curve", $curve);
-        });
-    }
-
-    /**
-     * @return Base16
-     */
-    public function base16(): Base16
-    {
-        return $this->privateKey;
-    }
-
-    /**
-     * @return PublicKeyInterface
-     * @throws \FurqanSiddiqui\BIP32\Exception\PublicKeyException
-     */
-    public function publicKey(): PublicKeyInterface
-    {
-        if (!$this->publicKey) {
-            $this->publicKey = new PublicKey($this);
-        }
-
-        return $this->publicKey;
-    }
-
-    /**
-     * @return ExtendedKeyInterface|null
-     */
-    public function ekd(): ?ExtendedKeyInterface
-    {
-        return $this->extendedKey;
+        return new Signature($this->bip32, $this->eccPrivateKey->signRecoverable($msgHash, $nonceK));
     }
 }
