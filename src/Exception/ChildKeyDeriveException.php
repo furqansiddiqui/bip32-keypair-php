@@ -20,5 +20,4 @@ namespace FurqanSiddiqui\BIP32\Exception;
  */
 class ChildKeyDeriveException extends ExtendedKeyException
 {
-    public const HINT_TRY_NEXT_INDEX = 1;
 }
