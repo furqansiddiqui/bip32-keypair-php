@@ -16,6 +16,7 @@ namespace FurqanSiddiqui\BIP32;
 
 use Comely\Buffer\AbstractByteArray;
 use Comely\Buffer\Bytes32;
+use FurqanSiddiqui\BIP32\Buffers\Base58;
 use FurqanSiddiqui\BIP32\Buffers\Bits32;
 use FurqanSiddiqui\BIP32\Buffers\Bits512;
 use FurqanSiddiqui\BIP32\Buffers\SerializedBIP32Key;
@@ -37,10 +38,12 @@ class BIP32
     /**
      * @param \FurqanSiddiqui\ECDSA\ECC\EllipticCurveInterface $ecc
      * @param \FurqanSiddiqui\BIP32\Networks\AbstractNetworkConfig $config
+     * @param \FurqanSiddiqui\BIP32\Buffers\Base58 $base58
      */
     public function __construct(
         public readonly EllipticCurveInterface $ecc,
-        public readonly AbstractNetworkConfig  $config
+        public readonly AbstractNetworkConfig  $config,
+        public readonly Base58                 $base58 = new Base58()
     )
     {
     }

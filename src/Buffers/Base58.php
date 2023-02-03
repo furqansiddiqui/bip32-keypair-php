@@ -14,7 +14,11 @@ declare(strict_types=1);
 
 namespace FurqanSiddiqui\BIP32\Buffers;
 
+use Comely\Buffer\AbstractByteArray;
+use Comely\Buffer\BigInteger;
 use Comely\Buffer\BigInteger\BaseCharset;
+use Comely\Buffer\Buffer;
+use FurqanSiddiqui\BIP32\Exception\Base58CheckException;
 
 /**
  * Class Base58
@@ -22,29 +26,68 @@ use Comely\Buffer\BigInteger\BaseCharset;
  */
 class Base58 extends BaseCharset
 {
-    /** @var static */
-    private static self $instance;
-
-    /**
-     * @return static
-     */
-    public static function Charset(): static
-    {
-        if (!isset(static::$instance)) {
-            static::$instance = new static();
-        }
-
-        return static::$instance;
-    }
-
     /**
      * Base58 charset constructor
      */
-    private function __construct()
+    public function __construct()
     {
         return parent::__construct(
             charset: "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz",
             caseSensitive: true
         );
+    }
+
+    /**
+     * @param \Comely\Buffer\AbstractByteArray $ser
+     * @return string
+     */
+    public function encode(AbstractByteArray $ser): string
+    {
+        return (new BigInteger($ser))->toCustomBase($this);
+    }
+
+    /**
+     * @param string $encoded
+     * @return \Comely\Buffer\AbstractByteArray
+     */
+    public function decode(string $encoded): AbstractByteArray
+    {
+        return BigInteger::fromCustomBase($encoded, $this)->toBuffer();
+    }
+
+    /**
+     * @param \Comely\Buffer\AbstractByteArray $bn
+     * @return \FurqanSiddiqui\BIP32\Buffers\Bits32
+     */
+    public function computeChecksum(AbstractByteArray $bn): Bits32
+    {
+        return new Bits32(substr(hash("sha256", hash("sha256", $bn->raw(), true), true), 0, 4));
+    }
+
+    /**
+     * @param \Comely\Buffer\AbstractByteArray $ser
+     * @return string
+     */
+    public function checkEncode(AbstractByteArray $ser): string
+    {
+        $ser2 = new Buffer($ser->raw());
+        $ser2->append($this->computeChecksum($ser));
+        return $this->encode($ser2);
+    }
+
+    /**
+     * @param string $encoded
+     * @return \Comely\Buffer\AbstractByteArray
+     * @throws \FurqanSiddiqui\BIP32\Exception\Base58CheckException
+     */
+    public function checkDecode(string $encoded): AbstractByteArray
+    {
+        $serBf = $this->decode($encoded)->raw();
+        $data = new Buffer(substr($serBf, 0, -4));
+        if ($this->computeChecksum($data)->raw() !== substr($serBf, -4)) {
+            throw new Base58CheckException('Checksum does not match');
+        }
+
+        return $data;
     }
 }

@@ -37,12 +37,12 @@ class ExtendedKeyPair extends AbstractKeyPair
      * @return static
      * @throws \FurqanSiddiqui\BIP32\Exception\UnserializeBIP32KeyException
      */
-    public static function Unserialize(BIP32 $bip32, SerializedBIP32Key $ser): static
+    public static function Unserialize(BIP32 $bip32, SerializedBIP32Key $ser): static|self
     {
         try {
             $parse = $ser->read();
             $version = Bits32::fromInteger($parse->readUInt32BE());
-            if (!$version->compare($bip32->config->exportPrivateKeyPrefix, $bip32->config->exportPublicKeyPrefix)) {
+            if (!$version->inArray($bip32->config->exportPrivateKeyPrefix, $bip32->config->exportPublicKeyPrefix)) {
                 throw new UnserializeBIP32KeyException('Network version byte does not match');
             }
 
@@ -192,7 +192,7 @@ class ExtendedKeyPair extends AbstractKeyPair
     private function serializeKey(Bits32 $versionBytes, AbstractByteArray $key): SerializedBIP32Key
     {
         return new SerializedBIP32Key((new Buffer())
-            ->appendUInt64BE($versionBytes->toInt())
+            ->appendUInt32BE($versionBytes->toInt())
             ->appendUInt8($this->depth)
             ->append($this->parentPubFp)
             ->appendUInt32BE($this->childNum->toInt())
