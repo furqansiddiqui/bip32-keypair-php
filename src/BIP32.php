@@ -134,11 +134,11 @@ class BIP32
     }
 
     /**
-     * @param \Comely\Buffer\Bytes32 $prv
+     * @param \Comely\Buffer\AbstractByteArray $prv
      * @return \FurqanSiddiqui\BIP32\KeyPair\MasterKeyPair
      * @throws \FurqanSiddiqui\BIP32\Exception\UnserializeBIP32KeyException
      */
-    public function masterKeyFromEntropy(Bytes32 $prv): MasterKeyPair
+    public function masterKeyFromEntropy(AbstractByteArray $prv): MasterKeyPair
     {
         return $this->masterKeyFromSeed($this->hmacEntropy($prv));
     }
@@ -150,13 +150,14 @@ class BIP32
      */
     public function masterKeyFromSeed(Bits512 $seed): MasterKeyPair
     {
+        $seed = $seed->raw();
         return new MasterKeyPair(
             $this,
-            new PrivateKey($this, new KeyPair($this->ecc, $seed->copy(0, 32))),
+            new PrivateKey($this, new KeyPair($this->ecc, new Bytes32(substr($seed, 0, 32)))),
             0,
             Bits32::fromInteger(0),
-            new Bits32(substr("\0", 4)),
-            new Bytes32($seed->copy(32)->raw())
+            new Bits32(str_repeat("\0", 4)),
+            new Bytes32(substr($seed, 32))
         );
     }
 
