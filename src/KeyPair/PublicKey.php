@@ -15,11 +15,13 @@ declare(strict_types=1);
 namespace FurqanSiddiqui\BIP32\KeyPair;
 
 use Comely\Buffer\AbstractByteArray;
+use Comely\Buffer\BigInteger;
 use Comely\Buffer\Buffer;
 use Comely\Buffer\Bytes32;
 use FurqanSiddiqui\BIP32\BIP32;
 use FurqanSiddiqui\BIP32\Buffers\Bits32;
 use FurqanSiddiqui\BIP32\Buffers\Signature;
+use FurqanSiddiqui\BIP32\Exception\KeyPairException;
 
 /**
  * Class PublicKey

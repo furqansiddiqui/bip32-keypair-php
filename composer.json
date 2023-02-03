@@ -17,8 +17,8 @@
     "ext-openssl": "*",
     "ext-bcmath": "*",
     "ext-gmp": "*",
-    "comely-io/buffer-php": "^0.1.9",
-    "furqansiddiqui/ecdsa-php": "^0.3.1"
+    "comely-io/buffer-php": "^0.1.12",
+    "furqansiddiqui/ecdsa-php": "^0.3.5"
   },
   "autoload": {
     "psr-4": {

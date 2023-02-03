@@ -36,16 +36,13 @@ class ExtendedKeyPair extends AbstractKeyPair
      * @param \FurqanSiddiqui\BIP32\Buffers\SerializedBIP32Key $ser
      * @return static
      * @throws \FurqanSiddiqui\BIP32\Exception\UnserializeBIP32KeyException
+     * @throws \FurqanSiddiqui\ECDSA\Exception\KeyPairException
      */
     public static function Unserialize(BIP32 $bip32, SerializedBIP32Key $ser): static|self
     {
         try {
             $parse = $ser->read();
             $version = Bits32::fromInteger($parse->readUInt32BE());
-            if (!$version->inArray($bip32->config->exportPrivateKeyPrefix, $bip32->config->exportPublicKeyPrefix)) {
-                throw new UnserializeBIP32KeyException('Network version byte does not match');
-            }
-
             $depth = $parse->readUInt8();
             $parentPubFp = new Bits32($parse->next(4));
             $childNum = Bits32::fromInteger($parse->readUInt32BE());
@@ -53,15 +50,27 @@ class ExtendedKeyPair extends AbstractKeyPair
             $keyPrefix = $parse->next(1);
             $keyBytes = new Bytes32($parse->next(32));
 
-            if ($keyPrefix === "\x00") {
+            if ($depth === 0 && !$parentPubFp->isZeroBytes()) {
+                throw new UnserializeBIP32KeyException('Zero depth with non-zero parent public key');
+            }
+
+            if ($depth === 0 && !$childNum->isZeroBytes()) {
+                throw new UnserializeBIP32KeyException('Zero depth with non-zero child index');
+            }
+
+            if ($keyPrefix === "\x00" && $version->compare($bip32->config->exportPrivateKeyPrefix)) {
                 $bip32Key = new PrivateKey($bip32, new KeyPair($bip32->ecc, $keyBytes));
             } elseif ($keyPrefix === "\x02" || $keyPrefix === "\x03") {
-                $bip32Key = new PublicKey($bip32, new \FurqanSiddiqui\ECDSA\ECC\PublicKey(
-                    $keyBytes->toBase16(),
-                    "",
-                    bin2hex($keyPrefix)
-                ));
-            } else {
+                if ($version->compare($bip32->config->exportPublicKeyPrefix)) {
+                    $bip32Key = new PublicKey($bip32, new \FurqanSiddiqui\ECDSA\ECC\PublicKey(
+                        $keyBytes->toBase16(),
+                        "",
+                        bin2hex($keyPrefix)
+                    ));
+                }
+            }
+
+            if (!isset($bip32Key)) {
                 throw new UnserializeBIP32KeyException('Invalid prefix for public/private keys');
             }
 

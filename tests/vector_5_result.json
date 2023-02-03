@@ -1,0 +1,195 @@
+{
+  "vectorId": 5,
+  "total": 16,
+  "passed": 15,
+  "failed": 1,
+  "tests": [
+    {
+      "pass": true,
+      "test": {
+        "key": "xpub661MyMwAqRbcEYS8w7XLSVeEsBXy79zSzH1J8vCdxAZningWLdN3zgtU6LBpB85b3D2yc8sfvZU521AAwdZafEz7mnzBBsz4wKY5fTtTQBm",
+        "error": "pubkey version \/ prvkey mismatch"
+      },
+      "exception": {
+        "class": "FurqanSiddiqui\\BIP32\\Exception\\UnserializeBIP32KeyException",
+        "code": 0,
+        "message": "Invalid prefix for public\/private keys"
+      }
+    },
+    {
+      "pass": true,
+      "test": {
+        "key": "xprv9s21ZrQH143K24Mfq5zL5MhWK9hUhhGbd45hLXo2Pq2oqzMMo63oStZzFGTQQD3dC4H2D5GBj7vWvSQaaBv5cxi9gafk7NF3pnBju6dwKvH",
+        "error": "prvkey version \/ pubkey mismatch"
+      },
+      "exception": {
+        "class": "FurqanSiddiqui\\BIP32\\Exception\\UnserializeBIP32KeyException",
+        "code": 0,
+        "message": "Invalid prefix for public\/private keys"
+      }
+    },
+    {
+      "pass": true,
+      "test": {
+        "key": "xpub661MyMwAqRbcEYS8w7XLSVeEsBXy79zSzH1J8vCdxAZningWLdN3zgtU6Txnt3siSujt9RCVYsx4qHZGc62TG4McvMGcAUjeuwZdduYEvFn",
+        "error": "invalid pubkey prefix 04"
+      },
+      "exception": {
+        "class": "FurqanSiddiqui\\BIP32\\Exception\\UnserializeBIP32KeyException",
+        "code": 0,
+        "message": "Invalid prefix for public\/private keys"
+      }
+    },
+    {
+      "pass": true,
+      "test": {
+        "key": "xprv9s21ZrQH143K24Mfq5zL5MhWK9hUhhGbd45hLXo2Pq2oqzMMo63oStZzFGpWnsj83BHtEy5Zt8CcDr1UiRXuWCmTQLxEK9vbz5gPstX92JQ",
+        "error": "invalid pubkey prefix 04"
+      },
+      "exception": {
+        "class": "FurqanSiddiqui\\BIP32\\Exception\\UnserializeBIP32KeyException",
+        "code": 0,
+        "message": "Invalid prefix for public\/private keys"
+      }
+    },
+    {
+      "pass": true,
+      "test": {
+        "key": "xpub661MyMwAqRbcEYS8w7XLSVeEsBXy79zSzH1J8vCdxAZningWLdN3zgtU6N8ZMMXctdiCjxTNq964yKkwrkBJJwpzZS4HS2fxvyYUA4q2Xe4",
+        "error": "invalid pubkey prefix 01"
+      },
+      "exception": {
+        "class": "FurqanSiddiqui\\BIP32\\Exception\\UnserializeBIP32KeyException",
+        "code": 0,
+        "message": "Invalid prefix for public\/private keys"
+      }
+    },
+    {
+      "pass": true,
+      "test": {
+        "key": "xprv9s21ZrQH143K24Mfq5zL5MhWK9hUhhGbd45hLXo2Pq2oqzMMo63oStZzFAzHGBP2UuGCqWLTAPLcMtD9y5gkZ6Eq3Rjuahrv17fEQ3Qen6J",
+        "error": "invalid pubkey prefix 01"
+      },
+      "exception": {
+        "class": "FurqanSiddiqui\\BIP32\\Exception\\UnserializeBIP32KeyException",
+        "code": 0,
+        "message": "Invalid prefix for public\/private keys"
+      }
+    },
+    {
+      "pass": true,
+      "test": {
+        "key": "xpub661no6RGEX3uJkY4bNnPcw4URcQTrSibUZ4NqJEw5eBkv7ovTwgiT91XX27VbEXGENhYRCf7hyEbWrR3FewATdCEebj6znwMfQkhRYHRLpJ",
+        "error": "zero depth with non-zero parent fingerprint"
+      },
+      "exception": {
+        "class": "FurqanSiddiqui\\BIP32\\Exception\\UnserializeBIP32KeyException",
+        "code": 0,
+        "message": "Zero depth with non-zero parent public key"
+      }
+    },
+    {
+      "pass": true,
+      "test": {
+        "key": "xprv9s2SPatNQ9Vc6GTbVMFPFo7jsaZySyzk7L8n2uqKXJen3KUmvQNTuLh3fhZMBoG3G4ZW1N2kZuHEPY53qmbZzCHshoQnNf4GvELZfqTUrcv",
+        "error": "zero depth with non-zero parent fingerprint"
+      },
+      "exception": {
+        "class": "FurqanSiddiqui\\BIP32\\Exception\\UnserializeBIP32KeyException",
+        "code": 0,
+        "message": "Zero depth with non-zero parent public key"
+      }
+    },
+    {
+      "pass": true,
+      "test": {
+        "key": "xprv9s21ZrQH4r4TsiLvyLXqM9P7k1K3EYhA1kkD6xuquB5i39AU8KF42acDyL3qsDbU9NmZn6MsGSUYZEsuoePmjzsB3eFKSUEh3Gu1N3cqVUN",
+        "error": "zero depth with non-zero index"
+      },
+      "exception": {
+        "class": "FurqanSiddiqui\\BIP32\\Exception\\UnserializeBIP32KeyException",
+        "code": 0,
+        "message": "Zero depth with non-zero child index"
+      }
+    },
+    {
+      "pass": true,
+      "test": {
+        "key": "xpub661MyMwAuDcm6CRQ5N4qiHKrJ39Xe1R1NyfouMKTTWcguwVcfrZJaNvhpebzGerh7gucBvzEQWRugZDuDXjNDRmXzSZe4c7mnTK97pTvGS8",
+        "error": "zero depth with non-zero index"
+      },
+      "exception": {
+        "class": "FurqanSiddiqui\\BIP32\\Exception\\UnserializeBIP32KeyException",
+        "code": 0,
+        "message": "Zero depth with non-zero child index"
+      }
+    },
+    {
+      "pass": true,
+      "test": {
+        "key": "DMwo58pR1QLEFihHiXPVykYB6fJmsTeHvyTp7hRThAtCX8CvYzgPcn8XnmdfHGMQzT7ayAmfo4z3gY5KfbrZWZ6St24UVf2Qgo6oujFktLHdHY4",
+        "error": "unknown extended key version"
+      },
+      "exception": {
+        "class": "FurqanSiddiqui\\BIP32\\Exception\\UnserializeBIP32KeyException",
+        "code": 0,
+        "message": "Invalid prefix for public\/private keys"
+      }
+    },
+    {
+      "pass": true,
+      "test": {
+        "key": "DMwo58pR1QLEFihHiXPVykYB6fJmsTeHvyTp7hRThAtCX8CvYzgPcn8XnmdfHPmHJiEDXkTiJTVV9rHEBUem2mwVbbNfvT2MTcAqj3nesx8uBf9",
+        "error": "unknown extended key version"
+      },
+      "exception": {
+        "class": "FurqanSiddiqui\\BIP32\\Exception\\UnserializeBIP32KeyException",
+        "code": 0,
+        "message": "Invalid prefix for public\/private keys"
+      }
+    },
+    {
+      "pass": true,
+      "test": {
+        "key": "xprv9s21ZrQH143K24Mfq5zL5MhWK9hUhhGbd45hLXo2Pq2oqzMMo63oStZzF93Y5wvzdUayhgkkFoicQZcP3y52uPPxFnfoLZB21Teqt1VvEHx",
+        "error": "private key 0 not in 1..n-1"
+      },
+      "exception": {
+        "class": "FurqanSiddiqui\\ECDSA\\Exception\\KeyPairException",
+        "code": 0,
+        "message": "Private key integer value is not positive"
+      }
+    },
+    {
+      "pass": true,
+      "test": {
+        "key": "xprv9s21ZrQH143K24Mfq5zL5MhWK9hUhhGbd45hLXo2Pq2oqzMMo63oStZzFAzHGBP2UuGCqWLTAPLcMtD5SDKr24z3aiUvKr9bJpdrcLg1y3G",
+        "error": "private key 0 not in 1..n-1"
+      },
+      "exception": {
+        "class": "FurqanSiddiqui\\ECDSA\\Exception\\KeyPairException",
+        "code": 0,
+        "message": "Private key integer value exceeds Secp256k1::ORDER"
+      }
+    },
+    {
+      "pass": false,
+      "test": {
+        "key": "xpub661MyMwAqRbcEYS8w7XLSVeEsBXy79zSzH1J8vCdxAZningWLdN3zgtU6Q5JXayek4PRsn35jii4veMimro1xefsM58PgBMrvdYre8QyULY",
+        "error": "invalid pubkey 020000000000000000000000000000000000000000000000000000000000000007"
+      }
+    },
+    {
+      "pass": true,
+      "test": {
+        "key": "xprv9s21ZrQH143K3QTDL4LXw2F7HEK3wJUD2nW2nRk4stbPy6cq3jPPqjiChkVvvNKmPGJxWUtg6LnF5kejMRNNU3TGtRBeJgk33yuGBxrMPH",
+        "error": "invalid checksum"
+      },
+      "exception": {
+        "class": "FurqanSiddiqui\\BIP32\\Exception\\Base58CheckException",
+        "code": 0,
+        "message": "Checksum does not match"
+      }
+    }
+  ]
+}
