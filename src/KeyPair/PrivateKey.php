@@ -23,7 +23,7 @@ use FurqanSiddiqui\ECDSA\KeyPair;
  * Class PrivateKey
  * @package FurqanSiddiqui\BIP32\KeyPair
  */
-class PrivateKey
+class PrivateKey implements PrivateKeyInterface
 {
     /**
      * @param \FurqanSiddiqui\BIP32\BIP32 $bip32

@@ -25,7 +25,7 @@ use FurqanSiddiqui\BIP32\Buffers\Signature;
  * Class PublicKey
  * @package FurqanSiddiqui\BIP32\KeyPair
  */
-class PublicKey
+class PublicKey implements PublicKeyInterface
 {
     /** @var \FurqanSiddiqui\BIP32\Buffers\Bits32 */
     public readonly Bits32 $fingerPrint;

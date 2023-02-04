@@ -46,7 +46,7 @@ abstract class AbstractKeyPair
     /**
      * @return \FurqanSiddiqui\BIP32\KeyPair\PublicKey
      */
-    public function publicKey(): PublicKey
+    public function publicKey(): PublicKeyInterface
     {
         if (!$this->pub) {
             $this->pub = new PublicKey($this->bip32, $this->prv->eccPrivateKey->public());
@@ -67,7 +67,7 @@ abstract class AbstractKeyPair
      * @return \FurqanSiddiqui\BIP32\KeyPair\PrivateKey
      * @throws \FurqanSiddiqui\BIP32\Exception\KeyPairException
      */
-    public function privateKey(): PrivateKey
+    public function privateKey(): PrivateKeyInterface
     {
         if (!$this->prv) {
             throw new KeyPairException('Key pair does not have a private key set');
