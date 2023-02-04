@@ -17,7 +17,6 @@ namespace FurqanSiddiqui\BIP32\KeyPair;
 use Comely\Buffer\Bytes32;
 use FurqanSiddiqui\BIP32\BIP32;
 use FurqanSiddiqui\BIP32\Buffers\Bits32;
-use FurqanSiddiqui\BIP32\Exception\ExtendedKeyException;
 use FurqanSiddiqui\BIP32\Exception\UnserializeBIP32KeyException;
 
 /**
@@ -42,33 +41,5 @@ class MasterKeyPair extends ExtendedKeyPair
         }
 
         parent::__construct($bip32, $key, $depth, $childNum, $parentPubFp, $chainCode);
-    }
-
-    /**
-     * @param $path
-     * @return \FurqanSiddiqui\BIP32\KeyPair\ExtendedKeyPair
-     * @throws \FurqanSiddiqui\BIP32\Exception\ChildKeyDeriveException
-     * @throws \FurqanSiddiqui\BIP32\Exception\ExtendedKeyException
-     */
-    public function derivePath($path): ExtendedKeyPair
-    {
-        $parts = explode("/", trim(strtolower($path), "/"));
-        if ($parts[0] !== "m") {
-            throw new ExtendedKeyException('Derivation path must start with "m"');
-        }
-
-        array_shift($parts); // Remove initial "m"
-        $derivedKey = $this;
-        foreach ($parts as $part) {
-            if (!is_string($part) || !preg_match('/^[0-9]+\'?$/', $part)) {
-                throw new ExtendedKeyException('Invalid index in derivation path');
-            }
-
-            $isHardened = str_ends_with($part, "'");
-            $index = $isHardened ? substr($part, 0, -1) : $part;
-            $derivedKey = $derivedKey->derive(intval($index), $isHardened);
-        }
-
-        return $derivedKey;
     }
 }

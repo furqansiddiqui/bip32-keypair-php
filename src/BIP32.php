@@ -17,6 +17,7 @@ namespace FurqanSiddiqui\BIP32;
 use Comely\Buffer\AbstractByteArray;
 use Comely\Buffer\Bytes32;
 use FurqanSiddiqui\BIP32\Buffers\Base58;
+use FurqanSiddiqui\BIP32\Buffers\BIP32_Provider;
 use FurqanSiddiqui\BIP32\Buffers\Bits32;
 use FurqanSiddiqui\BIP32\Buffers\Bits512;
 use FurqanSiddiqui\BIP32\Buffers\SerializedBIP32Key;
@@ -33,7 +34,7 @@ use FurqanSiddiqui\ECDSA\KeyPair;
  * Class BIP32
  * @package FurqanSiddiqui\BIP32
  */
-class BIP32
+class BIP32 implements BIP32_Provider
 {
     /**
      * @param \FurqanSiddiqui\ECDSA\ECC\EllipticCurveInterface $ecc

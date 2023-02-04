@@ -19,9 +19,11 @@ use Comely\Buffer\Buffer;
 use Comely\Buffer\Bytes32;
 use Comely\Buffer\Exception\ByteReaderUnderflowException;
 use FurqanSiddiqui\BIP32\BIP32;
+use FurqanSiddiqui\BIP32\Buffers\BIP32_Provider;
 use FurqanSiddiqui\BIP32\Buffers\Bits32;
 use FurqanSiddiqui\BIP32\Buffers\SerializedBIP32Key;
 use FurqanSiddiqui\BIP32\Exception\ChildKeyDeriveException;
+use FurqanSiddiqui\BIP32\Exception\ExtendedKeyException;
 use FurqanSiddiqui\BIP32\Exception\UnserializeBIP32KeyException;
 use FurqanSiddiqui\ECDSA\Exception\ECDSA_Exception;
 use FurqanSiddiqui\ECDSA\KeyPair;
@@ -30,7 +32,7 @@ use FurqanSiddiqui\ECDSA\KeyPair;
  * Class ExtendedKeyPair
  * @package FurqanSiddiqui\BIP32\KeyPair
  */
-class ExtendedKeyPair extends AbstractKeyPair
+class ExtendedKeyPair extends AbstractKeyPair implements ExtendedKeyInterface
 {
     /**
      * @param \FurqanSiddiqui\BIP32\BIP32 $bip32
@@ -38,7 +40,7 @@ class ExtendedKeyPair extends AbstractKeyPair
      * @return static
      * @throws \FurqanSiddiqui\BIP32\Exception\UnserializeBIP32KeyException
      */
-    public static function Unserialize(BIP32 $bip32, SerializedBIP32Key $ser): static
+    public static function Unserialize(BIP32_Provider $bip32, SerializedBIP32Key $ser): static
     {
         try {
             $parse = $ser->read();
@@ -110,6 +112,38 @@ class ExtendedKeyPair extends AbstractKeyPair
     public function __debugInfo(): array
     {
         return [sprintf("BIP32 Extended Key (%d)%d", $this->depth, $this->childNum->toInt())];
+    }
+
+    /**
+     * @param $path
+     * @return $this
+     * @throws \FurqanSiddiqui\BIP32\Exception\ChildKeyDeriveException
+     * @throws \FurqanSiddiqui\BIP32\Exception\ExtendedKeyException
+     */
+    public function derivePath($path): static
+    {
+        if ($this->depth !== 0) {
+            throw new ExtendedKeyException('derivePath method is only available to MasterKeyPair instances');
+        }
+
+        $parts = explode("/", trim(strtolower($path), "/"));
+        if ($parts[0] !== "m") {
+            throw new ExtendedKeyException('Derivation path must start with "m"');
+        }
+
+        array_shift($parts); // Remove initial "m"
+        $derivedKey = $this;
+        foreach ($parts as $part) {
+            if (!is_string($part) || !preg_match('/^[0-9]+\'?$/', $part)) {
+                throw new ExtendedKeyException('Invalid index in derivation path');
+            }
+
+            $isHardened = str_ends_with($part, "'");
+            $index = $isHardened ? substr($part, 0, -1) : $part;
+            $derivedKey = $derivedKey->derive(intval($index), $isHardened);
+        }
+
+        return $derivedKey;
     }
 
     /**
