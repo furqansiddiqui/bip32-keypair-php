@@ -41,7 +41,7 @@ abstract class AbstractNetworkConfig
      * @param int $hardenedIndexBeginsFrom
      * @param string $hmacSeed
      */
-    final protected function __construct(
+    public function __construct(
         public readonly Bits32 $exportPrivateKeyPrefix,
         public readonly Bits32 $exportPublicKeyPrefix,
         public readonly int    $hardenedIndexBeginsFrom,
