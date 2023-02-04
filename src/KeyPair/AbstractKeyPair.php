@@ -24,17 +24,17 @@ use FurqanSiddiqui\BIP32\Exception\KeyPairException;
 abstract class AbstractKeyPair
 {
     /** @var \FurqanSiddiqui\BIP32\KeyPair\PrivateKey|null */
-    protected readonly ?PrivateKey $prv;
+    protected readonly ?PrivateKeyInterface $prv;
     /** @var \FurqanSiddiqui\BIP32\KeyPair\PublicKey|null */
-    private null|PublicKey $pub;
+    private null|PublicKeyInterface $pub;
 
     /**
      * @param \FurqanSiddiqui\BIP32\BIP32 $bip32
      * @param \FurqanSiddiqui\BIP32\KeyPair\PrivateKey|\FurqanSiddiqui\BIP32\KeyPair\PublicKey $key
      */
-    public function __construct(public readonly BIP32 $bip32, PrivateKey|PublicKey $key)
+    public function __construct(public readonly BIP32 $bip32, PrivateKeyInterface|PublicKeyInterface $key)
     {
-        if ($key instanceof PrivateKey) {
+        if ($key instanceof PrivateKeyInterface) {
             $this->prv = $key;
             $this->pub = null;
         } else {
