@@ -23,14 +23,14 @@ use FurqanSiddiqui\BIP32\Exception\KeyPairException;
  */
 abstract class AbstractKeyPair
 {
-    /** @var \FurqanSiddiqui\BIP32\KeyPair\PrivateKey|null */
-    protected readonly ?PrivateKeyInterface $prv;
+    /** @var \FurqanSiddiqui\BIP32\KeyPair\PrivateKeyInterface|null */
+    protected readonly null|PrivateKeyInterface $prv;
     /** @var \FurqanSiddiqui\BIP32\KeyPair\PublicKey|null */
     private null|PublicKeyInterface $pub;
 
     /**
      * @param \FurqanSiddiqui\BIP32\BIP32 $bip32
-     * @param \FurqanSiddiqui\BIP32\KeyPair\PrivateKey|\FurqanSiddiqui\BIP32\KeyPair\PublicKey $key
+     * @param \FurqanSiddiqui\BIP32\KeyPair\PrivateKeyInterface|\FurqanSiddiqui\BIP32\KeyPair\PublicKeyInterface $key
      */
     public function __construct(public readonly BIP32 $bip32, PrivateKeyInterface|PublicKeyInterface $key)
     {
