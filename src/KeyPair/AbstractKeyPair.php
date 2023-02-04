@@ -1,7 +1,7 @@
 <?php
 /*
- * This file is a part of "furqansiddiqui/ecdsa-php" package.
- * https://github.com/furqansiddiqui/ecdsa-php
+ * This file is a part of "furqansiddiqui/bip32-keypair-php" package.
+ * https://github.com/furqansiddiqui/bip32-keypair-php
  *
  * Copyright (c) Furqan A. Siddiqui <hello@furqansiddiqui.com>
  *
