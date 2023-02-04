@@ -27,7 +27,7 @@ class BitcoinTestnet extends AbstractNetworkConfig
      */
     public static function createConfigInstance(): static
     {
-        return static::$instance = new static(
+        return new static(
             exportPrivateKeyPrefix: new Bits32(hex2bin("04358394")),
             exportPublicKeyPrefix: new Bits32(hex2bin("043587CF")),
             hardenedIndexBeginsFrom: 0x80000000,

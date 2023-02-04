@@ -20,19 +20,19 @@ use FurqanSiddiqui\BIP32\Buffers\Bits32;
  */
 abstract class AbstractNetworkConfig
 {
-    /** @var static */
-    protected static self $instance;
+    /** @var array */
+    protected static array $instances = [];
 
     /**
      * @return static
      */
     public static function loadConfig(): static
     {
-        if (isset(static::$instance)) {
-            return static::$instance;
+        if (isset(static::$instances[static::class])) {
+            return static::$instances[static::class];
         }
 
-        return static::$instance = static::createConfigInstance();
+        return static::$instances[static::class] = static::createConfigInstance();
     }
 
     /**
