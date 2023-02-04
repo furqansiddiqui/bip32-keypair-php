@@ -64,6 +64,7 @@ class BIP32
     /**
      * @param \Comely\Buffer\Bytes32 $entropy
      * @return \FurqanSiddiqui\BIP32\KeyPair\PrivateKey
+     * @throws \FurqanSiddiqui\ECDSA\Exception\KeyPairException
      */
     public function privateKeyFromEntropy(Bytes32 $entropy): PrivateKey
     {
@@ -140,6 +141,7 @@ class BIP32
      * @param \Comely\Buffer\AbstractByteArray $prv
      * @return \FurqanSiddiqui\BIP32\KeyPair\MasterKeyPair
      * @throws \FurqanSiddiqui\BIP32\Exception\UnserializeBIP32KeyException
+     * @throws \FurqanSiddiqui\ECDSA\Exception\KeyPairException
      */
     public function masterKeyFromEntropy(AbstractByteArray $prv): MasterKeyPair
     {
@@ -150,6 +152,7 @@ class BIP32
      * @param \FurqanSiddiqui\BIP32\Buffers\Bits512 $seed
      * @return \FurqanSiddiqui\BIP32\KeyPair\MasterKeyPair
      * @throws \FurqanSiddiqui\BIP32\Exception\UnserializeBIP32KeyException
+     * @throws \FurqanSiddiqui\ECDSA\Exception\KeyPairException
      */
     public function masterKeyFromSeed(Bits512 $seed): MasterKeyPair
     {
