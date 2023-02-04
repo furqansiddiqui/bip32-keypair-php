@@ -38,7 +38,7 @@ class ExtendedKeyPair extends AbstractKeyPair
      * @return static
      * @throws \FurqanSiddiqui\BIP32\Exception\UnserializeBIP32KeyException
      */
-    public static function Unserialize(BIP32 $bip32, SerializedBIP32Key $ser): static|self
+    public static function Unserialize(BIP32 $bip32, SerializedBIP32Key $ser): static
     {
         try {
             $parse = $ser->read();
@@ -78,11 +78,7 @@ class ExtendedKeyPair extends AbstractKeyPair
                 throw new UnserializeBIP32KeyException('Invalid prefix for public/private keys');
             }
 
-            if ($childNum->isZeroBytes() && $parentPubFp->isZeroBytes() && $depth === 0) {
-                return new MasterKeyPair($bip32, $bip32Key, $depth, $childNum, $parentPubFp, $chainCode);
-            }
-
-            return new ExtendedKeyPair($bip32, $bip32Key, $depth, $childNum, $parentPubFp, $chainCode);
+            return new static($bip32, $bip32Key, $depth, $childNum, $parentPubFp, $chainCode);
         } catch (ByteReaderUnderflowException $e) {
             throw new UnserializeBIP32KeyException(previous: $e);
         }
@@ -123,7 +119,7 @@ class ExtendedKeyPair extends AbstractKeyPair
      * @throws \FurqanSiddiqui\BIP32\Exception\ChildKeyDeriveException
      * @throws \FurqanSiddiqui\BIP32\Exception\ExtendedKeyException
      */
-    public function derive(int $index, bool $isHardened = false): ExtendedKeyPair
+    public function derive(int $index, bool $isHardened = false): static
     {
         if (!$this->prv) {
             throw new ChildKeyDeriveException('Private key is required for derivation');
@@ -151,7 +147,7 @@ class ExtendedKeyPair extends AbstractKeyPair
             ->append("\0")
             ->append($childPrivateKey);
 
-        return self::Unserialize($this->bip32, new SerializedBIP32Key($serialized->raw()));
+        return static::Unserialize($this->bip32, new SerializedBIP32Key($serialized->raw()));
     }
 
     /**
