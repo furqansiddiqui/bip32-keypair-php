@@ -25,8 +25,6 @@ use FurqanSiddiqui\BIP32\Buffers\SerializedBIP32Key;
 use FurqanSiddiqui\BIP32\Exception\ChildKeyDeriveException;
 use FurqanSiddiqui\BIP32\Exception\ExtendedKeyException;
 use FurqanSiddiqui\BIP32\Exception\UnserializeBIP32KeyException;
-use FurqanSiddiqui\ECDSA\Exception\ECDSA_Exception;
-use FurqanSiddiqui\ECDSA\KeyPair;
 
 /**
  * Class ExtendedKeyPair
@@ -61,10 +59,10 @@ class ExtendedKeyPair extends AbstractKeyPair implements ExtendedKeyInterface
             }
 
             try {
-                if ($keyPrefix === "\x00" && $version->compare($bip32->config->exportPrivateKeyPrefix)) {
+                if ($keyPrefix === "\x00" && $version->compare($bip32->bip32Config()->exportPrivateKeyPrefix)) {
                     $bip32Key = $bip32->privateKeyFromEntropy($keyBytes);
                 } elseif ($keyPrefix === "\x02" || $keyPrefix === "\x03") {
-                    if ($version->compare($bip32->config->exportPublicKeyPrefix)) {
+                    if ($version->compare($bip32->bip32Config()->exportPublicKeyPrefix)) {
                         $bip32Key = $bip32->publicKeyFromIncomplete((new Buffer($keyPrefix))->append($keyBytes));
                     }
                 }

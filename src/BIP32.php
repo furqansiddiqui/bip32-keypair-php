@@ -50,6 +50,14 @@ class BIP32 implements BIP32_Provider
     }
 
     /**
+     * @return \FurqanSiddiqui\BIP32\Networks\AbstractNetworkConfig
+     */
+    public function bip32Config(): AbstractNetworkConfig
+    {
+        return $this->config;
+    }
+
+    /**
      * @return \Comely\Buffer\Bytes32
      * @throws \FurqanSiddiqui\BIP32\Exception\KeyPairException
      */
