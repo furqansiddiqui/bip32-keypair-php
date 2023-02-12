@@ -110,7 +110,7 @@ class BIP32 implements BIP32_Provider
 
         return new PublicKey(
             $this,
-            new \FurqanSiddiqui\ECDSA\ECC\PublicKey(bin2hex(substr($compressedPubKey, 1)), bin2hex($compressedPubKey[0]))
+            new \FurqanSiddiqui\ECDSA\ECC\PublicKey(bin2hex(substr($compressedPubKey, 1)), "", bin2hex($compressedPubKey[0]))
         );
     }
 

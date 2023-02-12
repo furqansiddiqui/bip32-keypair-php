@@ -14,10 +14,26 @@ declare(strict_types=1);
 
 namespace FurqanSiddiqui\BIP32\Buffers;
 
+use Comely\Buffer\AbstractByteArray;
+use Comely\Buffer\Bytes32;
+use FurqanSiddiqui\BIP32\KeyPair\PrivateKeyInterface;
+use FurqanSiddiqui\BIP32\KeyPair\PublicKeyInterface;
+
 /**
  * Interface BIP32_Provider
  * @package FurqanSiddiqui\BIP32\Buffers
  */
 interface BIP32_Provider
 {
+    /**
+     * @param \Comely\Buffer\Bytes32 $entropy
+     * @return \FurqanSiddiqui\BIP32\KeyPair\PrivateKeyInterface
+     */
+    public function privateKeyFromEntropy(Bytes32 $entropy): PrivateKeyInterface;
+
+    /**
+     * @param \Comely\Buffer\AbstractByteArray $compressedPubKey
+     * @return \FurqanSiddiqui\BIP32\KeyPair\PublicKeyInterface
+     */
+    public function publicKeyFromIncomplete(AbstractByteArray $compressedPubKey): PublicKeyInterface;
 }

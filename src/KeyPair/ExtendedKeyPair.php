@@ -35,7 +35,7 @@ use FurqanSiddiqui\ECDSA\KeyPair;
 class ExtendedKeyPair extends AbstractKeyPair implements ExtendedKeyInterface
 {
     /**
-     * @param \FurqanSiddiqui\BIP32\BIP32 $bip32
+     * @param \FurqanSiddiqui\BIP32\Buffers\BIP32_Provider $bip32
      * @param \FurqanSiddiqui\BIP32\Buffers\SerializedBIP32Key $ser
      * @return static
      * @throws \FurqanSiddiqui\BIP32\Exception\UnserializeBIP32KeyException
@@ -62,17 +62,13 @@ class ExtendedKeyPair extends AbstractKeyPair implements ExtendedKeyInterface
 
             try {
                 if ($keyPrefix === "\x00" && $version->compare($bip32->config->exportPrivateKeyPrefix)) {
-                    $bip32Key = new PrivateKey($bip32, new KeyPair($bip32->ecc, $keyBytes));
+                    $bip32Key = $bip32->privateKeyFromEntropy($keyBytes);
                 } elseif ($keyPrefix === "\x02" || $keyPrefix === "\x03") {
                     if ($version->compare($bip32->config->exportPublicKeyPrefix)) {
-                        $bip32Key = new PublicKey($bip32, new \FurqanSiddiqui\ECDSA\ECC\PublicKey(
-                            $keyBytes->toBase16(),
-                            "",
-                            bin2hex($keyPrefix)
-                        ));
+                        $bip32Key = $bip32->publicKeyFromIncomplete((new Buffer($keyPrefix))->append($keyBytes));
                     }
                 }
-            } catch (ECDSA_Exception $e) {
+            } catch (\Exception $e) {
                 throw new UnserializeBIP32KeyException($e->getMessage());
             }
 
