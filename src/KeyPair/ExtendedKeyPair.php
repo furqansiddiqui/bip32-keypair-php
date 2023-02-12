@@ -120,7 +120,7 @@ class ExtendedKeyPair extends AbstractKeyPair implements ExtendedKeyInterface
      * @throws \FurqanSiddiqui\BIP32\Exception\ChildKeyDeriveException
      * @throws \FurqanSiddiqui\BIP32\Exception\ExtendedKeyException
      */
-    public function derivePath($path): static
+    public function derivePath($path): ExtendedKeyInterface
     {
         if ($this->depth !== 0) {
             throw new ExtendedKeyException('derivePath method is only available to MasterKeyPair instances');
@@ -153,9 +153,9 @@ class ExtendedKeyPair extends AbstractKeyPair implements ExtendedKeyInterface
      * @throws \FurqanSiddiqui\BIP32\Exception\ChildKeyDeriveException
      * @throws \FurqanSiddiqui\BIP32\Exception\UnserializeBIP32KeyException
      */
-    public function derive(int $index, bool $isHardened = false): static
+    public function derive(int $index, bool $isHardened = false): ExtendedKeyInterface
     {
-        return static::Unserialize($this->bip32, $this->_derive($index, $isHardened));
+        return ExtendedKeyPair::Unserialize($this->bip32, $this->_derive($index, $isHardened));
     }
 
     /**

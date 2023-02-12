@@ -37,6 +37,10 @@ class MasterKeyPair extends ExtendedKeyPair
     public function __construct(BIP32 $bip32, PublicKey|PrivateKey $key, int $depth, Bits32 $childNum, Bits32 $parentPubFp, Bytes32 $chainCode)
     {
         if (!$childNum->isZeroBytes() || !$parentPubFp->isZeroBytes() || $depth !== 0) {
+            var_dump($childNum);
+            var_dump($parentPubFp);
+            var_dump($depth);
+
             throw new UnserializeBIP32KeyException('Cannot unserialize child key as MasterKeyPair');
         }
 
