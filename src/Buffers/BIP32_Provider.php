@@ -16,9 +16,9 @@ namespace FurqanSiddiqui\BIP32\Buffers;
 
 use Comely\Buffer\AbstractByteArray;
 use Comely\Buffer\Bytes32;
+use FurqanSiddiqui\BIP32\BIP32;
 use FurqanSiddiqui\BIP32\KeyPair\PrivateKeyInterface;
 use FurqanSiddiqui\BIP32\KeyPair\PublicKeyInterface;
-use FurqanSiddiqui\BIP32\Networks\AbstractNetworkConfig;
 
 /**
  * Interface BIP32_Provider
@@ -39,7 +39,7 @@ interface BIP32_Provider
     public function publicKeyFromIncomplete(AbstractByteArray $compressedPubKey): PublicKeyInterface;
 
     /**
-     * @return \FurqanSiddiqui\BIP32\Networks\AbstractNetworkConfig
+     * @return \FurqanSiddiqui\BIP32\BIP32
      */
-    public function bip32Config(): AbstractNetworkConfig;
+    public function bip32(): BIP32;
 }

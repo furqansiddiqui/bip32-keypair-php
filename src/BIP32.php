@@ -50,11 +50,11 @@ class BIP32 implements BIP32_Provider
     }
 
     /**
-     * @return \FurqanSiddiqui\BIP32\Networks\AbstractNetworkConfig
+     * @return $this
      */
-    public function bip32Config(): AbstractNetworkConfig
+    public function bip32(): static
     {
-        return $this->config;
+        return $this;
     }
 
     /**

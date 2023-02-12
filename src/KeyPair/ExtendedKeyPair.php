@@ -59,10 +59,10 @@ class ExtendedKeyPair extends AbstractKeyPair implements ExtendedKeyInterface
             }
 
             try {
-                if ($keyPrefix === "\x00" && $version->compare($bip32->bip32Config()->exportPrivateKeyPrefix)) {
+                if ($keyPrefix === "\x00" && $version->compare($bip32->bip32()->config->exportPrivateKeyPrefix)) {
                     $bip32Key = $bip32->privateKeyFromEntropy($keyBytes);
                 } elseif ($keyPrefix === "\x02" || $keyPrefix === "\x03") {
-                    if ($version->compare($bip32->bip32Config()->exportPublicKeyPrefix)) {
+                    if ($version->compare($bip32->bip32()->config->exportPublicKeyPrefix)) {
                         $bip32Key = $bip32->publicKeyFromIncomplete((new Buffer($keyPrefix))->append($keyBytes));
                     }
                 }
@@ -74,7 +74,7 @@ class ExtendedKeyPair extends AbstractKeyPair implements ExtendedKeyInterface
                 throw new UnserializeBIP32KeyException('Invalid prefix for public/private keys');
             }
 
-            return new static($bip32, $bip32Key, $depth, $childNum, $parentPubFp, $chainCode);
+            return new static($bip32->bip32(), $bip32Key, $depth, $childNum, $parentPubFp, $chainCode);
         } catch (ByteReaderUnderflowException $e) {
             throw new UnserializeBIP32KeyException(previous: $e);
         }
