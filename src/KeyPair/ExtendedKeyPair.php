@@ -95,12 +95,12 @@ class ExtendedKeyPair extends AbstractKeyPair implements ExtendedKeyInterface
      * @param \Comely\Buffer\Bytes32 $chainCode
      */
     public function __construct(
-        BIP32                   $bip32,
-        PrivateKey|PublicKey    $key,
-        public readonly int     $depth,
-        public readonly Bits32  $childNum,
-        public readonly Bits32  $parentPubFp,
-        public readonly Bytes32 $chainCode,
+        BIP32                                  $bip32,
+        PrivateKeyInterface|PublicKeyInterface $key,
+        public readonly int                    $depth,
+        public readonly Bits32                 $childNum,
+        public readonly Bits32                 $parentPubFp,
+        public readonly Bytes32                $chainCode,
     )
     {
         parent::__construct($bip32, $key);
@@ -149,11 +149,22 @@ class ExtendedKeyPair extends AbstractKeyPair implements ExtendedKeyInterface
     /**
      * @param int $index
      * @param bool $isHardened
-     * @return \FurqanSiddiqui\BIP32\KeyPair\ExtendedKeyPair
+     * @return $this
      * @throws \FurqanSiddiqui\BIP32\Exception\ChildKeyDeriveException
-     * @throws \FurqanSiddiqui\BIP32\Exception\ExtendedKeyException
+     * @throws \FurqanSiddiqui\BIP32\Exception\UnserializeBIP32KeyException
      */
     public function derive(int $index, bool $isHardened = false): static
+    {
+        return static::Unserialize($this->bip32, $this->_derive($index, $isHardened));
+    }
+
+    /**
+     * @param int $index
+     * @param bool $isHardened
+     * @return \FurqanSiddiqui\BIP32\Buffers\SerializedBIP32Key
+     * @throws \FurqanSiddiqui\BIP32\Exception\ChildKeyDeriveException
+     */
+    protected function _derive(int $index, bool $isHardened = false): SerializedBIP32Key
     {
         if (!$this->prv) {
             throw new ChildKeyDeriveException('Private key is required for derivation');
@@ -181,7 +192,7 @@ class ExtendedKeyPair extends AbstractKeyPair implements ExtendedKeyInterface
             ->append("\0")
             ->append($childPrivateKey);
 
-        return static::Unserialize($this->bip32, new SerializedBIP32Key($serialized->raw()));
+        return new SerializedBIP32Key($serialized->raw());
     }
 
     /**
