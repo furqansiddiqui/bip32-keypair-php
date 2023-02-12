@@ -155,7 +155,7 @@
         "error": "private key 0 not in 1..n-1"
       },
       "exception": {
-        "class": "FurqanSiddiqui\\ECDSA\\Exception\\KeyPairException",
+        "class": "FurqanSiddiqui\\BIP32\\Exception\\UnserializeBIP32KeyException",
         "code": 0,
         "message": "Private key integer value is not positive"
       }
@@ -167,7 +167,7 @@
         "error": "private key 0 not in 1..n-1"
       },
       "exception": {
-        "class": "FurqanSiddiqui\\ECDSA\\Exception\\KeyPairException",
+        "class": "FurqanSiddiqui\\BIP32\\Exception\\UnserializeBIP32KeyException",
         "code": 0,
         "message": "Private key integer value exceeds Secp256k1::ORDER"
       }
