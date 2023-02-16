@@ -26,7 +26,7 @@ abstract class AbstractKeyPair
     /** @var \FurqanSiddiqui\BIP32\KeyPair\PrivateKeyInterface|null */
     protected readonly null|PrivateKeyInterface $prv;
     /** @var \FurqanSiddiqui\BIP32\KeyPair\PublicKey|null */
-    private null|PublicKeyInterface $pub;
+    protected null|PublicKeyInterface $pub;
 
     /**
      * @param \FurqanSiddiqui\BIP32\BIP32 $bip32
