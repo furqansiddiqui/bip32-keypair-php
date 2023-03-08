@@ -31,7 +31,9 @@ class Bitcoin extends AbstractNetworkConfig
             exportPrivateKeyPrefix: new Bits32(hex2bin("0488ADE4")),
             exportPublicKeyPrefix: new Bits32(hex2bin("0488B21E")),
             hardenedIndexBeginsFrom: 0x80000000,
-            hmacSeed: "Bitcoin seed"
+            hmacSeed: "Bitcoin seed",
+            base58Charset: "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz",
+            base58CaseSensitive: true,
         );
     }
 }

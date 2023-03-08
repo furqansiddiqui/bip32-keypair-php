@@ -27,17 +27,6 @@ use FurqanSiddiqui\BIP32\Exception\Base58CheckException;
 class Base58 extends BaseCharset
 {
     /**
-     * Base58 charset constructor
-     */
-    public function __construct()
-    {
-        return parent::__construct(
-            charset: "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz",
-            caseSensitive: true
-        );
-    }
-
-    /**
      * @param \Comely\Buffer\AbstractByteArray $ser
      * @return string
      */

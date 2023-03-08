@@ -36,17 +36,20 @@ use FurqanSiddiqui\ECDSA\KeyPair;
  */
 class BIP32 implements BIP32_Provider
 {
+    public readonly Base58 $base58;
+
     /**
      * @param \FurqanSiddiqui\ECDSA\ECC\EllipticCurveInterface $ecc
      * @param \FurqanSiddiqui\BIP32\Networks\AbstractNetworkConfig $config
-     * @param \FurqanSiddiqui\BIP32\Buffers\Base58 $base58
+     * @param \FurqanSiddiqui\BIP32\Buffers\Base58|null $base58
      */
     public function __construct(
         public readonly EllipticCurveInterface $ecc,
         public readonly AbstractNetworkConfig  $config,
-        public readonly Base58                 $base58 = new Base58()
+        ?Base58                                $base58 = null
     )
     {
+        $this->base58 = $base58 ?? new Base58($this->config->base58Charset, $this->config->base58CaseSensitive);
     }
 
     /**

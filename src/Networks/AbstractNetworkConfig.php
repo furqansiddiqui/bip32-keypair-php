@@ -40,12 +40,16 @@ abstract class AbstractNetworkConfig
      * @param \FurqanSiddiqui\BIP32\Buffers\Bits32 $exportPublicKeyPrefix
      * @param int $hardenedIndexBeginsFrom
      * @param string $hmacSeed
+     * @param string $base58Charset
+     * @param bool $base58CaseSensitive
      */
     public function __construct(
         public readonly Bits32 $exportPrivateKeyPrefix,
         public readonly Bits32 $exportPublicKeyPrefix,
         public readonly int    $hardenedIndexBeginsFrom,
         public readonly string $hmacSeed,
+        public readonly string $base58Charset,
+        public readonly bool   $base58CaseSensitive,
     )
     {
     }

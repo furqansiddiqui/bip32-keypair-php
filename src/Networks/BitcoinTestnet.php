@@ -31,7 +31,9 @@ class BitcoinTestnet extends AbstractNetworkConfig
             exportPrivateKeyPrefix: new Bits32(hex2bin("04358394")),
             exportPublicKeyPrefix: new Bits32(hex2bin("043587CF")),
             hardenedIndexBeginsFrom: 0x80000000,
-            hmacSeed: "Bitcoin seed"
+            hmacSeed: "Bitcoin seed",
+            base58Charset: "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz",
+            base58CaseSensitive: true,
         );
     }
 }
