@@ -28,20 +28,29 @@ class Base58 extends BaseCharset
 {
     /**
      * @param \Comely\Buffer\AbstractByteArray $ser
+     * @param bool $convertLeadingZeros
      * @return string
      */
-    public function encode(AbstractByteArray $ser): string
+    public function encode(AbstractByteArray $ser, bool $convertLeadingZeros = true): string
     {
-        return (new BigInteger($ser))->toCustomBase($this);
+        $zCount = $convertLeadingZeros ? $ser->len() - strlen(ltrim("\0", $ser->raw())) : 0;
+        $result = (new BigInteger($ser))->toCustomBase($this);
+        if ($zCount > 0) {
+            $result = str_repeat($this->charset[0], $zCount) . $result;
+        }
+
+        return $result;
     }
 
     /**
      * @param string $encoded
+     * @param bool $convertLeadingZeros
      * @return \Comely\Buffer\AbstractByteArray
      */
-    public function decode(string $encoded): AbstractByteArray
+    public function decode(string $encoded, bool $convertLeadingZeros = true): AbstractByteArray
     {
-        return BigInteger::fromCustomBase($encoded, $this)->toBuffer();
+        $zCount = $convertLeadingZeros ? strlen($encoded) - strlen(ltrim($encoded, $this->charset[0])) : 0;
+        return BigInteger::fromCustomBase($encoded, $this)->toBuffer()->prepend(str_repeat("\0", $zCount));
     }
 
     /**
@@ -55,23 +64,25 @@ class Base58 extends BaseCharset
 
     /**
      * @param \Comely\Buffer\AbstractByteArray $ser
+     * @param bool $convertLeadingZeros
      * @return string
      */
-    public function checkEncode(AbstractByteArray $ser): string
+    public function checkEncode(AbstractByteArray $ser, bool $convertLeadingZeros = true): string
     {
         $ser2 = new Buffer($ser->raw());
         $ser2->append($this->computeChecksum($ser));
-        return $this->encode($ser2);
+        return $this->encode($ser2, $convertLeadingZeros);
     }
 
     /**
      * @param string $encoded
+     * @param bool $convertLeadingZeros
      * @return \Comely\Buffer\AbstractByteArray
      * @throws \FurqanSiddiqui\BIP32\Exception\Base58CheckException
      */
-    public function checkDecode(string $encoded): AbstractByteArray
+    public function checkDecode(string $encoded, bool $convertLeadingZeros = true): AbstractByteArray
     {
-        $serBf = $this->decode($encoded)->raw();
+        $serBf = $this->decode($encoded, $convertLeadingZeros)->raw();
         $data = new Buffer(substr($serBf, 0, -4));
         if ($this->computeChecksum($data)->raw() !== substr($serBf, -4)) {
             throw new Base58CheckException('Checksum does not match');
