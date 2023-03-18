@@ -33,7 +33,7 @@ class Base58 extends BaseCharset
      */
     public function encode(AbstractByteArray $ser, bool $convertLeadingZeros = true): string
     {
-        $zCount = $convertLeadingZeros ? $ser->len() - strlen(ltrim("\0", $ser->raw())) : 0;
+        $zCount = $convertLeadingZeros ? $ser->len() - strlen(ltrim($ser->raw(), "\0")) : 0;
         $result = (new BigInteger($ser))->toCustomBase($this);
         if ($zCount > 0) {
             $result = str_repeat($this->charset[0], $zCount) . $result;
