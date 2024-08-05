@@ -17,6 +17,7 @@ namespace FurqanSiddiqui\BIP32\KeyPair;
 use Charcoal\Buffers\AbstractByteArray;
 use Charcoal\Buffers\Buffer;
 use Charcoal\Buffers\Frames\Bytes32;
+use Charcoal\Buffers\Frames\Bytes32P;
 use FurqanSiddiqui\BIP32\BIP32;
 use FurqanSiddiqui\BIP32\Buffers\BIP32_Provider;
 use FurqanSiddiqui\BIP32\Buffers\Bits32;
@@ -175,7 +176,7 @@ class ExtendedKeyPair extends AbstractKeyPair implements ExtendedKeyInterface
             gmp_init($this->prv->eccPrivateKey->private->toBase16(), 16)
         );
 
-        $childPrivateKey = Bytes32::fromBase16(gmp_strval($childPrivateKey, 16));
+        $childPrivateKey = Bytes32P::fromBase16(gmp_strval($childPrivateKey, 16));
         $serialized = new Buffer();
         $serialized->appendUInt32BE($this->bip32->config->exportPrivateKeyPrefix->toInt())
             ->appendUInt8($this->depth + 1)

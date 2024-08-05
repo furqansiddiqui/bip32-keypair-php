@@ -14,6 +14,13 @@ declare(strict_types=1);
 
 require "../vendor/autoload.php";
 
+/**
+ * @param int $num
+ * @param \FurqanSiddiqui\BIP32\BIP32 $bip32
+ * @return array
+ * @throws \FurqanSiddiqui\BIP32\Exception\UnserializeBIP32KeyException
+ * @throws \FurqanSiddiqui\ECDSA\Exception\KeyPairException
+ */
 function run_vector_test(int $num, \FurqanSiddiqui\BIP32\BIP32 $bip32): array
 {
     $vectors = json_decode(file_get_contents("vectors.json"), true);
@@ -22,7 +29,7 @@ function run_vector_test(int $num, \FurqanSiddiqui\BIP32\BIP32 $bip32): array
         throw new RuntimeException('No such test vector is configured');
     }
 
-    $m = $bip32->masterKeyFromEntropy(\Comely\Buffer\Buffer::fromBase16($vector["seed"]));
+    $m = $bip32->masterKeyFromEntropy(\Charcoal\Buffers\Buffer::fromBase16($vector["seed"]));
     $report = [
         "vectorId" => $num,
         "total" => count($vector["tests"]),
