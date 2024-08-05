@@ -14,8 +14,8 @@ declare(strict_types=1);
 
 namespace FurqanSiddiqui\BIP32;
 
-use Comely\Buffer\AbstractByteArray;
-use Comely\Buffer\Bytes32;
+use Charcoal\Buffers\AbstractByteArray;
+use Charcoal\Buffers\Frames\Bytes32;
 use FurqanSiddiqui\BIP32\Buffers\Base58;
 use FurqanSiddiqui\BIP32\Buffers\BIP32_Provider;
 use FurqanSiddiqui\BIP32\Buffers\Bits32;
@@ -34,9 +34,9 @@ use FurqanSiddiqui\ECDSA\KeyPair;
  * Class BIP32
  * @package FurqanSiddiqui\BIP32
  */
-class BIP32 implements BIP32_Provider
+readonly class BIP32 implements BIP32_Provider
 {
-    public readonly Base58 $base58;
+    public Base58 $base58;
 
     /**
      * @param \FurqanSiddiqui\ECDSA\ECC\EllipticCurveInterface $ecc
@@ -44,37 +44,16 @@ class BIP32 implements BIP32_Provider
      * @param \FurqanSiddiqui\BIP32\Buffers\Base58|null $base58
      */
     public function __construct(
-        public readonly EllipticCurveInterface $ecc,
-        public readonly AbstractNetworkConfig  $config,
-        ?Base58                                $base58 = null
+        public EllipticCurveInterface $ecc,
+        public AbstractNetworkConfig  $config,
+        ?Base58                       $base58 = null
     )
     {
         $this->base58 = $base58 ?? new Base58($this->config->base58Charset, $this->config->base58CaseSensitive);
     }
 
     /**
-     * @return $this
-     */
-    public function bip32(): static
-    {
-        return $this;
-    }
-
-    /**
-     * @return \Comely\Buffer\Bytes32
-     * @throws \FurqanSiddiqui\BIP32\Exception\KeyPairException
-     */
-    public function generateSecureEntropy(): Bytes32
-    {
-        try {
-            return new Bytes32(random_bytes(32));
-        } catch (\Exception) {
-            throw new KeyPairException('Failed to generate PRNG random 32 bytes');
-        }
-    }
-
-    /**
-     * @param \Comely\Buffer\Bytes32 $entropy
+     * @param \Charcoal\Buffers\Frames\Bytes32 $entropy
      * @return \FurqanSiddiqui\BIP32\KeyPair\PrivateKey
      * @throws \FurqanSiddiqui\ECDSA\Exception\KeyPairException
      */
@@ -84,7 +63,7 @@ class BIP32 implements BIP32_Provider
     }
 
     /**
-     * @param \Comely\Buffer\AbstractByteArray $publicKey
+     * @param \Charcoal\Buffers\AbstractByteArray $publicKey
      * @return \FurqanSiddiqui\BIP32\KeyPair\PublicKey
      * @throws \FurqanSiddiqui\ECDSA\Exception\KeyPairException
      */
@@ -94,7 +73,7 @@ class BIP32 implements BIP32_Provider
     }
 
     /**
-     * @param \Comely\Buffer\AbstractByteArray $publicKey
+     * @param \Charcoal\Buffers\AbstractByteArray $publicKey
      * @return \FurqanSiddiqui\BIP32\KeyPair\PublicKey
      * @throws \FurqanSiddiqui\ECDSA\Exception\KeyPairException
      */
@@ -104,7 +83,7 @@ class BIP32 implements BIP32_Provider
     }
 
     /**
-     * @param \Comely\Buffer\AbstractByteArray $compressedPubKey
+     * @param \Charcoal\Buffers\AbstractByteArray $compressedPubKey
      * @return \FurqanSiddiqui\BIP32\KeyPair\PublicKey
      * @throws \FurqanSiddiqui\BIP32\Exception\KeyPairException
      */
@@ -126,7 +105,7 @@ class BIP32 implements BIP32_Provider
     }
 
     /**
-     * @param \FurqanSiddiqui\BIP32\Buffers\SerializedBIP32Key|\Comely\Buffer\AbstractByteArray $ser
+     * @param \FurqanSiddiqui\BIP32\Buffers\SerializedBIP32Key|\Charcoal\Buffers\AbstractByteArray $ser
      * @return \FurqanSiddiqui\BIP32\KeyPair\MasterKeyPair|\FurqanSiddiqui\BIP32\KeyPair\ExtendedKeyPair
      * @throws \FurqanSiddiqui\BIP32\Exception\UnserializeBIP32KeyException
      */
@@ -140,7 +119,7 @@ class BIP32 implements BIP32_Provider
     }
 
     /**
-     * @param \Comely\Buffer\AbstractByteArray $entropy
+     * @param \Charcoal\Buffers\AbstractByteArray $entropy
      * @param string|null $overrideConfigSeed
      * @return \FurqanSiddiqui\BIP32\Buffers\Bits512
      */
@@ -150,7 +129,7 @@ class BIP32 implements BIP32_Provider
     }
 
     /**
-     * @param \Comely\Buffer\AbstractByteArray $prv
+     * @param \Charcoal\Buffers\AbstractByteArray $prv
      * @return \FurqanSiddiqui\BIP32\KeyPair\MasterKeyPair
      * @throws \FurqanSiddiqui\BIP32\Exception\UnserializeBIP32KeyException
      * @throws \FurqanSiddiqui\ECDSA\Exception\KeyPairException
@@ -181,7 +160,7 @@ class BIP32 implements BIP32_Provider
 
     /**
      * @param \FurqanSiddiqui\BIP32\KeyPair\PrivateKey|\FurqanSiddiqui\BIP32\KeyPair\PublicKey $key
-     * @param \Comely\Buffer\Bytes32 $chainCode
+     * @param \Charcoal\Buffers\Frames\Bytes32 $chainCode
      * @param int $depth
      * @param \FurqanSiddiqui\BIP32\Buffers\Bits32 $childNum
      * @param \FurqanSiddiqui\BIP32\Buffers\Bits32 $parentPubFp
@@ -196,5 +175,13 @@ class BIP32 implements BIP32_Provider
     ): ExtendedKeyPair
     {
         return new ExtendedKeyPair($this, $key, $depth, $childNum, $parentPubFp, $chainCode);
+    }
+
+    /**
+     * @return $this
+     */
+    public function bip32(): BIP32
+    {
+        return $this;
     }
 }

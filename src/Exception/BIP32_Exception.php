@@ -14,10 +14,26 @@ declare(strict_types=1);
 
 namespace FurqanSiddiqui\BIP32\Exception;
 
+
 /**
  * Class BIP32_Exception
  * @package FurqanSiddiqui\BIP32\Exception
  */
 class BIP32_Exception extends \Exception
 {
+    /**
+     * @param string $message
+     * @param int $code
+     * @param \Throwable|null $previous
+     * @param array $debug
+     */
+    public function __construct(
+        string       $message = "",
+        int          $code = 0,
+        \Throwable   $previous = null,
+        public array $debug = []
+    )
+    {
+        parent::__construct($message, $code, $previous);
+    }
 }

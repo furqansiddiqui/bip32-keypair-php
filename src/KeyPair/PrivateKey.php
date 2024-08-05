@@ -14,7 +14,7 @@ declare(strict_types=1);
 
 namespace FurqanSiddiqui\BIP32\KeyPair;
 
-use Comely\Buffer\Bytes32;
+use Charcoal\Buffers\Frames\Bytes32;
 use FurqanSiddiqui\BIP32\BIP32;
 use FurqanSiddiqui\BIP32\Buffers\Signature;
 use FurqanSiddiqui\ECDSA\KeyPair;
@@ -23,15 +23,15 @@ use FurqanSiddiqui\ECDSA\KeyPair;
  * Class PrivateKey
  * @package FurqanSiddiqui\BIP32\KeyPair
  */
-class PrivateKey implements PrivateKeyInterface
+readonly class PrivateKey implements PrivateKeyInterface
 {
     /**
      * @param \FurqanSiddiqui\BIP32\BIP32 $bip32
      * @param \FurqanSiddiqui\ECDSA\KeyPair $eccPrivateKey
      */
     public function __construct(
-        public readonly BIP32   $bip32,
-        public readonly KeyPair $eccPrivateKey,
+        public BIP32                          $bip32,
+        #[\SensitiveParameter] public KeyPair $eccPrivateKey,
     )
     {
     }
@@ -45,8 +45,8 @@ class PrivateKey implements PrivateKeyInterface
     }
 
     /**
-     * @param \Comely\Buffer\Bytes32 $msgHash
-     * @param \Comely\Buffer\Bytes32|null $nonceK
+     * @param \Charcoal\Buffers\Frames\Bytes32 $msgHash
+     * @param \Charcoal\Buffers\Frames\Bytes32|null $nonceK
      * @return \FurqanSiddiqui\BIP32\Buffers\Signature
      */
     public function sign(Bytes32 $msgHash, ?Bytes32 $nonceK = null): Signature
@@ -55,8 +55,8 @@ class PrivateKey implements PrivateKeyInterface
     }
 
     /**
-     * @param \Comely\Buffer\Bytes32 $msgHash
-     * @param \Comely\Buffer\Bytes32|null $nonceK
+     * @param \Charcoal\Buffers\Frames\Bytes32 $msgHash
+     * @param \Charcoal\Buffers\Frames\Bytes32|null $nonceK
      * @return \FurqanSiddiqui\BIP32\Buffers\Signature
      * @throws \FurqanSiddiqui\ECDSA\Exception\SignatureException
      */

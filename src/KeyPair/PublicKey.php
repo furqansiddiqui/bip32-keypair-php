@@ -14,9 +14,8 @@ declare(strict_types=1);
 
 namespace FurqanSiddiqui\BIP32\KeyPair;
 
-use Comely\Buffer\AbstractByteArray;
-use Comely\Buffer\Buffer;
-use Comely\Buffer\Bytes32;
+use Charcoal\Buffers\AbstractByteArray;
+use Charcoal\Buffers\Frames\Bytes32;
 use FurqanSiddiqui\BIP32\BIP32;
 use FurqanSiddiqui\BIP32\Buffers\Bits32;
 use FurqanSiddiqui\BIP32\Buffers\Signature;
@@ -25,16 +24,16 @@ use FurqanSiddiqui\BIP32\Buffers\Signature;
  * Class PublicKey
  * @package FurqanSiddiqui\BIP32\KeyPair
  */
-class PublicKey implements PublicKeyInterface
+readonly class PublicKey implements PublicKeyInterface
 {
     /** @var \FurqanSiddiqui\BIP32\Buffers\Bits32 */
-    public readonly Bits32 $fingerPrint;
+    public Bits32 $fingerPrint;
     /** @var bool */
-    public readonly bool $isComplete;
+    public bool $isComplete;
 
     /**
      * @param \FurqanSiddiqui\BIP32\BIP32 $bip32
-     * @param \Comely\Buffer\AbstractByteArray $publicKey
+     * @param \Charcoal\Buffers\AbstractByteArray $publicKey
      * @return static
      * @throws \FurqanSiddiqui\ECDSA\Exception\KeyPairException
      */
@@ -49,8 +48,8 @@ class PublicKey implements PublicKeyInterface
      * @param \FurqanSiddiqui\ECDSA\ECC\PublicKey $eccPublicKey
      */
     public function __construct(
-        public readonly BIP32                               $bip32,
-        public readonly \FurqanSiddiqui\ECDSA\ECC\PublicKey $eccPublicKey
+        public BIP32                               $bip32,
+        public \FurqanSiddiqui\ECDSA\ECC\PublicKey $eccPublicKey
     )
     {
         $this->isComplete = strlen($this->eccPublicKey->y) === 64;
@@ -60,16 +59,16 @@ class PublicKey implements PublicKeyInterface
     }
 
     /**
-     * @return \Comely\Buffer\Buffer
+     * @return \Charcoal\Buffers\AbstractByteArray
      */
-    public function compressed(): Buffer
+    public function compressed(): AbstractByteArray
     {
         return $this->eccPublicKey->getCompressed();
     }
 
     /**
      * @param \FurqanSiddiqui\BIP32\Buffers\Signature $sig
-     * @param \Comely\Buffer\Bytes32 $msgHash
+     * @param \Charcoal\Buffers\Frames\Bytes32 $msgHash
      * @param int|null $recId
      * @return bool
      */
@@ -85,7 +84,7 @@ class PublicKey implements PublicKeyInterface
 
     /**
      * @param \FurqanSiddiqui\BIP32\Buffers\Signature $sig
-     * @param \Comely\Buffer\Bytes32 $msgHash
+     * @param \Charcoal\Buffers\Frames\Bytes32 $msgHash
      * @return bool
      */
     public function verifySignature(Signature $sig, Bytes32 $msgHash): bool
@@ -124,7 +123,7 @@ class PublicKey implements PublicKeyInterface
 
     /**
      * @param \FurqanSiddiqui\BIP32\Buffers\Signature $sig
-     * @param \Comely\Buffer\Bytes32 $msgHash
+     * @param \Charcoal\Buffers\Frames\Bytes32 $msgHash
      * @return int|bool
      */
     public function findRecoveryId(Signature $sig, Bytes32 $msgHash): int|bool

@@ -14,10 +14,9 @@ declare(strict_types=1);
 
 namespace FurqanSiddiqui\BIP32\KeyPair;
 
-use Comely\Buffer\AbstractByteArray;
-use Comely\Buffer\Buffer;
-use Comely\Buffer\Bytes32;
-use Comely\Buffer\Exception\ByteReaderUnderflowException;
+use Charcoal\Buffers\AbstractByteArray;
+use Charcoal\Buffers\Buffer;
+use Charcoal\Buffers\Frames\Bytes32;
 use FurqanSiddiqui\BIP32\BIP32;
 use FurqanSiddiqui\BIP32\Buffers\BIP32_Provider;
 use FurqanSiddiqui\BIP32\Buffers\Bits32;
@@ -75,18 +74,18 @@ class ExtendedKeyPair extends AbstractKeyPair implements ExtendedKeyInterface
             }
 
             return new static($bip32->bip32(), $bip32Key, $depth, $childNum, $parentPubFp, $chainCode);
-        } catch (ByteReaderUnderflowException $e) {
+        } catch (\UnderflowException $e) {
             throw new UnserializeBIP32KeyException(previous: $e);
         }
     }
 
     /**
      * @param \FurqanSiddiqui\BIP32\BIP32 $bip32
-     * @param \FurqanSiddiqui\BIP32\KeyPair\PrivateKey|\FurqanSiddiqui\BIP32\KeyPair\PublicKey $key
+     * @param \FurqanSiddiqui\BIP32\KeyPair\PrivateKeyInterface|\FurqanSiddiqui\BIP32\KeyPair\PublicKeyInterface $key
      * @param int $depth
      * @param \FurqanSiddiqui\BIP32\Buffers\Bits32 $childNum
      * @param \FurqanSiddiqui\BIP32\Buffers\Bits32 $parentPubFp
-     * @param \Comely\Buffer\Bytes32 $chainCode
+     * @param \Charcoal\Buffers\Frames\Bytes32 $chainCode
      */
     public function __construct(
         BIP32                                  $bip32,
@@ -234,7 +233,7 @@ class ExtendedKeyPair extends AbstractKeyPair implements ExtendedKeyInterface
 
     /**
      * @param \FurqanSiddiqui\BIP32\Buffers\Bits32 $versionBytes
-     * @param \Comely\Buffer\AbstractByteArray $key
+     * @param \Charcoal\Buffers\AbstractByteArray $key
      * @return \FurqanSiddiqui\BIP32\Buffers\SerializedBIP32Key
      */
     private function serializeKey(Bits32 $versionBytes, AbstractByteArray $key): SerializedBIP32Key
