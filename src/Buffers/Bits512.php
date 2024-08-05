@@ -14,7 +14,7 @@ declare(strict_types=1);
 
 namespace FurqanSiddiqui\BIP32\Buffers;
 
-use Comely\Buffer\AbstractFixedLenBuffer;
+use Charcoal\Buffers\AbstractFixedLenBuffer;
 
 /**
  * Class Bits512
@@ -22,8 +22,5 @@ use Comely\Buffer\AbstractFixedLenBuffer;
  */
 class Bits512 extends AbstractFixedLenBuffer
 {
-    /** @var int */
-    protected const SIZE = 64;
-    /** @var bool */
-    protected bool $readOnly = true;
+    public const SIZE = 64;
 }

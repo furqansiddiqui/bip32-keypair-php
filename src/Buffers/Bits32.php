@@ -14,8 +14,8 @@ declare(strict_types=1);
 
 namespace FurqanSiddiqui\BIP32\Buffers;
 
-use Comely\Buffer\AbstractFixedLenBuffer;
-use Comely\Buffer\Traits\CompareBuffersDataTrait;
+use Charcoal\Buffers\AbstractFixedLenBuffer;
+use Charcoal\Buffers\Frames\CompareSmallFramesTrait;
 
 /**
  * Class Bits32
@@ -23,14 +23,10 @@ use Comely\Buffer\Traits\CompareBuffersDataTrait;
  */
 class Bits32 extends AbstractFixedLenBuffer
 {
-    /** @var int */
-    protected const SIZE = 4;
-    /** @var int */
+    public const SIZE = 4;
     protected const PAD_TO_LENGTH = STR_PAD_LEFT;
-    /** @var bool */
-    protected bool $readOnly = true;
 
-    use CompareBuffersDataTrait;
+    use CompareSmallFramesTrait;
 
     /**
      * @param int $value

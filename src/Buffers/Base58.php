@@ -14,27 +14,27 @@ declare(strict_types=1);
 
 namespace FurqanSiddiqui\BIP32\Buffers;
 
-use Comely\Buffer\AbstractByteArray;
-use Comely\Buffer\BigInteger;
-use Comely\Buffer\BigInteger\BaseCharset;
-use Comely\Buffer\Buffer;
+use Charcoal\Adapters\GMP\BigInteger;
+use Charcoal\Adapters\GMP\CustomBaseCharset;
+use Charcoal\Buffers\AbstractByteArray;
+use Charcoal\Buffers\Buffer;
 use FurqanSiddiqui\BIP32\Exception\Base58CheckException;
 
 /**
  * Class Base58
  * @package FurqanSiddiqui\BIP32\Buffers
  */
-class Base58 extends BaseCharset
+class Base58 extends CustomBaseCharset
 {
     /**
-     * @param \Comely\Buffer\AbstractByteArray $ser
+     * @param \Charcoal\Buffers\AbstractByteArray $ser
      * @param bool $convertLeadingZeros
      * @return string
      */
     public function encode(AbstractByteArray $ser, bool $convertLeadingZeros = true): string
     {
         $zCount = $convertLeadingZeros ? $ser->len() - strlen(ltrim($ser->raw(), "\0")) : 0;
-        $result = (new BigInteger($ser))->toCustomBase($this);
+        $result = BigInteger::fromBuffer($ser)->toCustomBase($this);
         if ($zCount > 0) {
             $result = str_repeat($this->charset[0], $zCount) . $result;
         }
@@ -45,16 +45,17 @@ class Base58 extends BaseCharset
     /**
      * @param string $encoded
      * @param bool $convertLeadingZeros
-     * @return \Comely\Buffer\AbstractByteArray
+     * @return \Charcoal\Buffers\AbstractByteArray
      */
     public function decode(string $encoded, bool $convertLeadingZeros = true): AbstractByteArray
     {
         $zCount = $convertLeadingZeros ? strlen($encoded) - strlen(ltrim($encoded, $this->charset[0])) : 0;
-        return BigInteger::fromCustomBase($encoded, $this)->toBuffer()->prepend(str_repeat("\0", $zCount));
+        return Buffer::fromBase16(BigInteger::fromCustomBase($encoded, $this)->toBase16())
+            ->prepend(str_repeat("\0", $zCount));
     }
 
     /**
-     * @param \Comely\Buffer\AbstractByteArray $bn
+     * @param \Charcoal\Buffers\AbstractByteArray $bn
      * @return \FurqanSiddiqui\BIP32\Buffers\Bits32
      */
     public function computeChecksum(AbstractByteArray $bn): Bits32
@@ -63,7 +64,7 @@ class Base58 extends BaseCharset
     }
 
     /**
-     * @param \Comely\Buffer\AbstractByteArray $ser
+     * @param \Charcoal\Buffers\AbstractByteArray $ser
      * @param bool $convertLeadingZeros
      * @return string
      */
@@ -77,7 +78,7 @@ class Base58 extends BaseCharset
     /**
      * @param string $encoded
      * @param bool $convertLeadingZeros
-     * @return \Comely\Buffer\AbstractByteArray
+     * @return \Charcoal\Buffers\AbstractByteArray
      * @throws \FurqanSiddiqui\BIP32\Exception\Base58CheckException
      */
     public function checkDecode(string $encoded, bool $convertLeadingZeros = true): AbstractByteArray

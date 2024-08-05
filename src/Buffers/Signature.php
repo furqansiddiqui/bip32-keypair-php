@@ -14,29 +14,29 @@ declare(strict_types=1);
 
 namespace FurqanSiddiqui\BIP32\Buffers;
 
-use Comely\Buffer\AbstractByteArray;
+use Charcoal\Buffers\AbstractByteArray;
 use FurqanSiddiqui\BIP32\BIP32;
 
 /**
  * Class Signature
  * @package FurqanSiddiqui\BIP32\Buffers
  */
-class Signature
+readonly class Signature
 {
     /**
      * @param \FurqanSiddiqui\BIP32\BIP32 $bip32
      * @param \FurqanSiddiqui\ECDSA\Signature\Signature $eccSignature
      */
     public function __construct(
-        public readonly BIP32                                     $bip32,
-        public readonly \FurqanSiddiqui\ECDSA\Signature\Signature $eccSignature
+        public BIP32                                     $bip32,
+        public \FurqanSiddiqui\ECDSA\Signature\Signature $eccSignature
     )
     {
     }
 
     /**
      * @param \FurqanSiddiqui\BIP32\BIP32 $bip32
-     * @param \Comely\Buffer\AbstractByteArray $signature
+     * @param \Charcoal\Buffers\AbstractByteArray $signature
      * @return static
      * @throws \FurqanSiddiqui\ECDSA\Exception\ECDSA_Exception
      * @throws \FurqanSiddiqui\ECDSA\Exception\SignatureException
@@ -48,9 +48,8 @@ class Signature
 
     /**
      * @param \FurqanSiddiqui\BIP32\BIP32 $bip32
-     * @param \Comely\Buffer\AbstractByteArray $signature
+     * @param \Charcoal\Buffers\AbstractByteArray $signature
      * @return static
-     * @throws \Comely\Buffer\Exception\ByteReaderUnderflowException
      * @throws \FurqanSiddiqui\ECDSA\Exception\SignatureException
      */
     public static function fromCompact(BIP32 $bip32, AbstractByteArray $signature): static
